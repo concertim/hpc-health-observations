@@ -13,7 +13,7 @@
     --bg:#f7f8fa; --surface:#ffffff; --surface-2:#fbfcfe;
     --text:#1a1d23; --muted:#5b6472; --faint:#8a93a1;
     --border:#e5e8ee; --border-strong:#d3dae3;
-    --accent:#2563eb; --radius:14px; --radius-sm:9px;
+    --accent:#ff7401; --accent-ink:#1a1d23; --radius:14px; --radius-sm:9px;
     --shadow:0 1px 2px rgba(16,24,40,.05), 0 6px 18px rgba(16,24,40,.06);
     --shadow-hover:0 4px 10px rgba(16,24,40,.07), 0 14px 32px rgba(16,24,40,.10);
     --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -33,9 +33,9 @@
     line-height:1.6; font-size:16px; -webkit-font-smoothing:antialiased;
   }
   a{color:inherit}
-  .skip{position:absolute;left:-9999px;top:0;z-index:50;background:var(--accent);color:#fff;
+  .skip{position:absolute;left:-9999px;top:0;z-index:50;background:var(--accent);color:var(--accent-ink);
     padding:.5rem .8rem;border-radius:0 0 var(--radius-sm) 0}
-  .skip:focus{left:0;color:#fff}
+  .skip:focus{left:0;color:var(--accent-ink)}
 
   /* ------------------------------------------------------------------ *
    * Header
@@ -79,8 +79,8 @@
     background:var(--surface);color:var(--text);transition:all .15s;display:inline-flex;gap:.4rem;align-items:center}
   .pill:hover{border-color:var(--accent)}
   .pill .cnt{font-size:.72rem;color:var(--faint);font-weight:600;tabular-nums:tabular}
-  .pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
-  .pill[aria-pressed="true"] .cnt{color:rgba(255,255,255,.82)}
+  .pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .pill[aria-pressed="true"] .cnt{color:rgba(0,0,0,.62)}
   .pill.scope[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:var(--bg)}
   #search{flex:1 1 240px;min-width:180px;font:inherit;font-size:.9rem;padding:.5rem .8rem .5rem 2.05rem;
     border:1px solid var(--border-strong);border-radius:999px;background:var(--surface) var(--search-ico) no-repeat .7rem center/0.95em;
@@ -109,8 +109,8 @@
   .badge.topic{color:var(--acc);background:color-mix(in srgb,var(--acc) 13%,transparent);
     border-color:color-mix(in srgb,var(--acc) 32%,transparent)}
   .badge.scope{color:var(--muted);background:var(--surface-2)}
-  .badge.draft{color:#b45309;background:#fffbeb;border-color:#fde68a}
-  [data-theme="dark"] .badge.draft{color:#fcd34d;background:#3a2f12;border-color:#6b5418}
+  .badge.draft{color:#6b7280;background:#f3f4f6;border-color:#d1d5db}
+  [data-theme="dark"] .badge.draft{color:#cbd5e1;background:#374151;border-color:#4b5563}
   .desc{margin:.2rem 0 0;color:var(--text);font-size:.92rem}
   .muted{color:var(--faint);font-style:italic}
   .authornotes{margin:.6rem 0 0;font-size:.85rem;background:var(--surface-2);border:1px dashed var(--border-strong);
@@ -226,7 +226,7 @@
         <strong>Why no priority or severity labels?</strong> Because what's urgent depends entirely on the
         specific customer, site, and the assets an observation touches. A "critical" filesystem fill on one
         cluster may be routine headroom on another. We've deliberately left severity out of this guide to
-        avoid implying a fixed ranking — work with us to triage against your environment.
+        avoid implying a fixed ranking — it is recommended to triage against your environment specifically.
       </div>
       <h2>Topics</h2>
       <p>Observations are grouped into topics: <strong>Vitals</strong> (essential health indicators),
@@ -275,19 +275,10 @@
 const DATA = __DATA__;
 
 /* -------------------------------------------------------------------- *
- * Topic colour assignment (stable, with a fallback cycle for new ones)
+ * Accent — Concertim orange, applied uniformly across all topics
  * -------------------------------------------------------------------- */
-const ACCENTS = {
-  vitals:      "#2563eb",
-  security:    "#dc2626",
-  performance: "#059669",
-};
-const FALLBACK = ["#7c3aed","#0891b2","#ca8a04","#db2777","#0d9488"];
-function accentFor(slug){
-  if(ACCENTS[slug]) return ACCENTS[slug];
-  let h=0; for(const c of slug) h=(h*31+c.charCodeAt(0))>>>0;
-  return FALLBACK[h % FALLBACK.length];
-}
+const ACCENT = "#ff7401";
+function accentFor(_slug){ return ACCENT; }
 
 /* Precompute search haystacks (lowercased). */
 const hay = DATA.map(it => ([
