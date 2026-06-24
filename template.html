@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HPC Health Observations — An Open Reference Guide</title>
+<meta name="description" content="An open, living reference for how the Concertim team begins investigating HPC health observations across Vitals, Security, and Performance topics.">
+<style>
+  /* ------------------------------------------------------------------ *
+   * Design tokens
+   * ------------------------------------------------------------------ */
+  :root{
+    --bg:#f7f8fa; --surface:#ffffff; --surface-2:#fbfcfe;
+    --text:#1a1d23; --muted:#5b6472; --faint:#8a93a1;
+    --border:#e5e8ee; --border-strong:#d3dae3;
+    --accent:#2563eb; --radius:14px; --radius-sm:9px;
+    --shadow:0 1px 2px rgba(16,24,40,.05), 0 6px 18px rgba(16,24,40,.06);
+    --shadow-hover:0 4px 10px rgba(16,24,40,.07), 0 14px 32px rgba(16,24,40,.10);
+    --font:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  [data-theme="dark"]{
+    --bg:#0e1116; --surface:#161a21; --surface-2:#1b2029;
+    --text:#e7e9ee; --muted:#9aa3b2; --faint:#6b7380;
+    --border:#262c37; --border-strong:#333b48;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
+    --shadow-hover:0 4px 10px rgba(0,0,0,.45), 0 14px 32px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; font-family:var(--font); color:var(--text); background:var(--bg);
+    line-height:1.6; font-size:16px; -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+  .skip{position:absolute;left:-9999px;top:0;z-index:50;background:var(--accent);color:#fff;
+    padding:.5rem .8rem;border-radius:0 0 var(--radius-sm) 0}
+  .skip:focus{left:0;color:#fff}
+
+  /* ------------------------------------------------------------------ *
+   * Header
+   * ------------------------------------------------------------------ */
+  .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:1rem;
+    justify-content:space-between;padding:.9rem 1.1rem;background:color-mix(in srgb,var(--surface) 86%,transparent);
+    backdrop-filter:saturate(1.2) blur(8px);border-bottom:1px solid var(--border)}
+  .brand h1{margin:0;font-size:1.18rem;font-weight:650;letter-spacing:-.01em}
+  .brand p{margin:.1rem 0 0;font-size:.82rem;color:var(--muted)}
+  .topcontrols{display:flex;gap:.45rem}
+  .iconbtn{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:var(--radius-sm);
+    border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;
+    font-size:1.05rem;transition:background .15s,border-color .15s,transform .08s}
+  .iconbtn:hover{background:var(--surface-2);border-color:var(--accent)}
+  .iconbtn:active{transform:scale(.96)}
+  .iconbtn[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 14%,var(--surface));border-color:var(--accent);color:var(--accent)}
+
+  /* ------------------------------------------------------------------ *
+   * Toolbar / filters
+   * ------------------------------------------------------------------ */
+  .toolbar{padding:0 1.1rem;max-width:1180px;margin:0 auto}
+  .about{margin:1rem 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0 .2rem}
+  .about > summary{cursor:pointer;list-style:none;padding:.85rem 1rem;font-weight:600;
+    display:flex;align-items:center;justify-content:space-between}
+  .about > summary::-webkit-details-marker{display:none}
+  .about > summary::after{content:"▾";color:var(--faint);font-size:.85rem;transition:transform .2s}
+  .about[open] > summary::after{transform:rotate(180deg)}
+  .about-body{padding:0 1rem 1.1rem;color:var(--muted);font-size:.95rem}
+  .about-body h2{color:var(--text);font-size:1rem;margin:1rem 0 .35rem}
+  .about-body p{margin:.5rem 0}
+  .callout{background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid color-mix(in srgb,var(--accent) 26%,transparent);
+    border-left:3px solid var(--accent);border-radius:var(--radius-sm);padding:.7rem .85rem;margin:.7rem 0;color:var(--text)}
+  .callout strong{color:var(--accent)}
+
+  .filters{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem .55rem;margin:.5rem 0 .2rem}
+  .pillgroup{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+  .pillgroup .legend{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--faint);font-weight:700;margin-right:.2rem;width:100%}
+  .pill{appearance:none;font:inherit;font-size:.83rem;font-weight:550;cursor:pointer;
+    padding:.4rem .7rem;border-radius:999px;border:1px solid var(--border-strong);
+    background:var(--surface);color:var(--text);transition:all .15s;display:inline-flex;gap:.4rem;align-items:center}
+  .pill:hover{border-color:var(--accent)}
+  .pill .cnt{font-size:.72rem;color:var(--faint);font-weight:600;tabular-nums:tabular}
+  .pill[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+  .pill[aria-pressed="true"] .cnt{color:rgba(255,255,255,.82)}
+  .pill.scope[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:var(--bg)}
+  #search{flex:1 1 240px;min-width:180px;font:inherit;font-size:.9rem;padding:.5rem .8rem .5rem 2.05rem;
+    border:1px solid var(--border-strong);border-radius:999px;background:var(--surface) var(--search-ico) no-repeat .7rem center/0.95em;
+    color:var(--text)}
+  #search:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  .count{margin:.55rem 0 0;font-size:.82rem;color:var(--muted)}
+
+  /* ------------------------------------------------------------------ *
+   * Main / grid
+   * ------------------------------------------------------------------ */
+  main{max-width:1180px;margin:0 auto;padding:1.1rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1rem}
+  .card{position:relative;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:1.05rem 1.1rem 1.1rem;box-shadow:var(--shadow);
+    transition:transform .12s,box-shadow .15s,border-color .15s;display:flex;flex-direction:column;overflow:hidden}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--acc)}
+  .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+  .card.draft{background:color-mix(in srgb,var(--surface) 80%,var(--surface))}
+  .card.draft::before{background:repeating-linear-gradient(90deg,#888 0 8px,transparent 8px 16px)}
+  .card .title{margin:.05rem 0 .5rem;font-size:1.02rem;font-weight:650;line-height:1.3;letter-spacing:-.01em}
+  .card .title a{text-decoration:none}
+  .card .title a:hover{text-decoration:underline;text-decoration-color:var(--acc);text-underline-offset:3px}
+  .badges{display:flex;flex-wrap:wrap;gap:.4rem;margin:.1rem 0 .7rem}
+  .badge{font-size:.72rem;font-weight:650;padding:.2rem .55rem;border-radius:999px;
+    border:1px solid var(--border);line-height:1.4;letter-spacing:.01em}
+  .badge.topic{color:var(--acc);background:color-mix(in srgb,var(--acc) 13%,transparent);
+    border-color:color-mix(in srgb,var(--acc) 32%,transparent)}
+  .badge.scope{color:var(--muted);background:var(--surface-2)}
+  .badge.draft{color:#b45309;background:#fffbeb;border-color:#fde68a}
+  [data-theme="dark"] .badge.draft{color:#fcd34d;background:#3a2f12;border-color:#6b5418}
+  .desc{margin:.2rem 0 0;color:var(--text);font-size:.92rem}
+  .muted{color:var(--faint);font-style:italic}
+  .authornotes{margin:.6rem 0 0;font-size:.85rem;background:var(--surface-2);border:1px dashed var(--border-strong);
+    border-radius:var(--radius-sm);padding:.5rem .65rem;color:var(--muted)}
+  .authornotes strong{color:var(--text)}
+  .authornotes ul{margin:.3rem 0 0;padding-left:1.1rem}
+
+  .start{margin-top:auto;padding-top:.7rem}
+  .start > summary{cursor:pointer;list-style:none;font-weight:600;font-size:.86rem;color:var(--acc);
+    display:flex;align-items:center;gap:.3rem;user-select:none}
+  .start > summary::-webkit-details-marker{display:none}
+  .start > summary .chev{transition:transform .2s;font-size:.8rem}
+  .start[open] > summary .chev{transform:rotate(180deg)}
+  .start > summary:hover{text-decoration:underline;text-underline-offset:3px}
+  .detbody{margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border)}
+  .sect{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);
+    font-weight:700;margin:.7rem 0 .3rem}
+  .sect:first-child{margin-top:0}
+  .intro{margin:.2rem 0 .6rem;font-size:.9rem;color:var(--muted)}
+  .steps{margin:.2rem 0 0;padding-left:1.25rem}
+  .steps li{margin:.32rem 0;font-size:.9rem}
+  .appendix{font-style:italic;color:var(--muted)}
+
+  /* ------------------------------------------------------------------ *
+   * Walkthrough
+   * ------------------------------------------------------------------ */
+  #walk .walkbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+    margin:0 auto;max-width:760px;margin-bottom:1rem}
+  .walknav{display:inline-flex;gap:.5rem;align-items:center}
+  .navbtn{font:inherit;font-weight:600;cursor:pointer;padding:.5rem .9rem;border-radius:var(--radius-sm);
+    border:1px solid var(--border-strong);background:var(--surface);color:var(--text);transition:all .15s}
+  .navbtn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+  .navbtn:disabled{opacity:.4;cursor:not-allowed}
+  #progress{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .walkhint{font-size:.78rem;color:var(--faint)}
+  .walkcard{max-width:760px;margin:0 auto;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:1.6rem 1.7rem;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .walkcard::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--acc)}
+  .walkcard .title{font-size:1.4rem;font-weight:680;letter-spacing:-.015em;margin:.4rem 0 .6rem;line-height:1.25}
+  .walkcard .back{display:inline-flex;align-items:center;gap:.3rem;font-size:.78rem;color:var(--faint);
+    text-decoration:none;margin-bottom:.4rem}
+  .walkcard .back:hover{color:var(--accent)}
+  .walkcard .badges{margin-bottom:.9rem}
+  .walkcard .desc{font-size:1rem;margin:.6rem 0 .9rem}
+  .walkcard .sect{font-size:.74rem}
+  .walkcard .impact{font-size:.97rem;margin:.2rem 0 1rem}
+  .walkcard .steps{font-size:.97rem}
+  .walkcard .steps li{margin:.4rem 0}
+  .walk-divider{height:1px;background:var(--border);margin:1.2rem 0}
+
+  .empty{max-width:560px;margin:3rem auto;text-align:center;color:var(--muted)}
+  .empty h2{color:var(--text)}
+
+  /* ------------------------------------------------------------------ *
+   * Footer
+   * ------------------------------------------------------------------ */
+  footer{max-width:1180px;margin:2rem auto 4rem;padding:1.1rem;border-top:1px solid var(--border);
+    font-size:.8rem;color:var(--faint)}
+  footer code{font-family:var(--mono);font-size:.78rem;background:var(--surface);padding:.1rem .3rem;border-radius:5px;border:1px solid var(--border)}
+
+  .hidden{display:none !important}
+  [hidden]{display:none}
+
+  @media (max-width:640px){
+    .topbar{flex-wrap:wrap}
+    .brand h1{font-size:1.05rem}
+    main{padding:.8rem}
+    .toolbar{padding:0 .8rem}
+    .walkcard{padding:1.2rem 1.1rem}
+    .walkcard .title{font-size:1.2rem}
+  }
+
+  @media print{
+    .topbar,.toolbar,.walkbar,.navbtn,.empty{display:none !important}
+    body{background:#fff;color:#000}
+    main{max-width:none;padding:0}
+    .grid{display:block}
+    .card{break-inside:avoid;box-shadow:none;border:1px solid #ccc;margin:0 0 1rem;page-break-inside:avoid}
+    .start{margin-top:.6rem}
+    .start > summary{display:list-item}
+    .start:not([open]) .detbody{display:block !important}
+    .card.draft::before{background:#999 !important}
+    footer{padding:.6rem 0;border-top:1px solid #ccc}
+  }
+
+  /* SVG search icon data-uri via background var set inline on #search above relies on --search-ico */
+  #search{--search-ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%235b6472' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E")}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="brand">
+    <h1>HPC Health Observations</h1>
+    <p>An open reference for where we begin investigating HPC environments</p>
+  </div>
+  <div class="topcontrols">
+    <button class="iconbtn" id="themeBtn" type="button" aria-label="Switch to dark theme" title="Toggle theme">🌙</button>
+    <button class="iconbtn" id="viewBtn" type="button" aria-pressed="false" aria-label="Walkthrough view" title="Toggle walkthrough view">≡</button>
+  </div>
+</header>
+
+<div class="toolbar">
+  <details class="about">
+    <summary>About this guide</summary>
+    <div class="about-body">
+      <p>This is an open, living reference describing how the Concertim team begins investigating HPC
+        health observations. It's shared so customers and peers can compare our practices against their
+        own — <strong>not as a prescription</strong> of what anyone must do. Each entry captures an
+        observation, what it can mean for the service, and where we'd start looking into it.</p>
+      <div class="callout">
+        <strong>Why no priority or severity labels?</strong> Because what's urgent depends entirely on the
+        specific customer, site, and the assets an observation touches. A "critical" filesystem fill on one
+        cluster may be routine headroom on another. We've deliberately left severity out of this guide to
+        avoid implying a fixed ranking — work with us to triage against your environment.
+      </div>
+      <h2>Topics</h2>
+      <p>Observations are grouped into topics: <strong>Vitals</strong> (essential health indicators),
+        <strong>Security</strong>, and <strong>Performance</strong>. Use the topic pills to focus on an area;
+        the scope pills and search narrow further. You can browse the grid or switch to a focused
+        walkthrough with the <code>≡</code> button (arrow keys navigate).</p>
+      <p>Some entries are still being written and are badged <em>Draft</em> — they're shown so the gaps are
+        visible, not hidden.</p>
+    </div>
+  </details>
+
+  <div class="filters">
+    <fieldset class="pillgroup" id="topics" aria-label="Filter by topic"></fieldset>
+    <fieldset class="pillgroup" id="scopes" aria-label="Filter by scope"></fieldset>
+    <input type="search" id="search" placeholder="Search observations…" autocomplete="off" aria-label="Search observations">
+  </div>
+  <p class="count" id="count" aria-live="polite"></p>
+</div>
+
+<main id="main">
+  <section class="grid" id="grid" aria-label="Observations"></section>
+  <section id="walk" class="hidden" aria-label="Walkthrough">
+    <div class="walkbar">
+      <span class="walkhint">← / → to move · Esc to exit</span>
+      <div class="walknav">
+        <button class="navbtn" id="prev" type="button">‹ Previous</button>
+        <span id="progress">1 / 1</span>
+        <button class="navbtn" id="next" type="button">Next ›</button>
+      </div>
+    </div>
+    <article class="walkcard" id="walkcard"></article>
+  </section>
+  <div class="empty hidden" id="empty">
+    <h2>No observations match your filters</h2>
+    <p>Try clearing the search or widening the topic / scope selection.</p>
+  </div>
+</main>
+
+<footer>
+  Built from the project CSVs · generated <time id="built">__BUILD__</time> ·
+  edit the CSVs and run <code>python3 build.py</code> to refresh.
+</footer>
+
+<script>
+"use strict";
+const DATA = __DATA__;
+
+/* -------------------------------------------------------------------- *
+ * Topic colour assignment (stable, with a fallback cycle for new ones)
+ * -------------------------------------------------------------------- */
+const ACCENTS = {
+  vitals:      "#2563eb",
+  security:    "#dc2626",
+  performance: "#059669",
+};
+const FALLBACK = ["#7c3aed","#0891b2","#ca8a04","#db2777","#0d9488"];
+function accentFor(slug){
+  if(ACCENTS[slug]) return ACCENTS[slug];
+  let h=0; for(const c of slug) h=(h*31+c.charCodeAt(0))>>>0;
+  return FALLBACK[h % FALLBACK.length];
+}
+
+/* Precompute search haystacks (lowercased). */
+const hay = DATA.map(it => ([
+  it.topic, it.scope, it.attention_area, it.description,
+  it.potential_service_impact, it.sow.intro||"",
+  ...(it.sow.steps||[]),
+  ...(it.authoring_notes||[])
+].join(" \n ")).toLowerCase());
+
+/* -------------------------------------------------------------------- *
+ * State
+ * -------------------------------------------------------------------- */
+const TOPIC_ORDER = ["Vitals","Security","Performance"];
+function topicRank(t){ const i = TOPIC_ORDER.indexOf(t); return i<0 ? 99+t : i; }
+const topicsAll = [...new Set(DATA.map(it=>it.topic))].sort((a,b)=>topicRank(a)-topicRank(b));
+const topicsSet = new Set();   // empty = all
+const scopesSet = new Set();   // empty = all (within selected topics)
+let query = "";
+let view = "grid";             // 'grid' | 'walk'
+let filtered = [];
+let walkIndex = 0;
+
+const $ = sel => document.querySelector(sel);
+
+/* -------------------------------------------------------------------- *
+ * Helpers
+ * -------------------------------------------------------------------- */
+function esc(s){
+  return String(s==null?"":s).replace(/[&<>"']/g, c =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+function rich(s){
+  // lightly enhance known cross-references (kept as plain emphasised text — no link)
+  return esc(s).replace(
+    /\(Appendix A: Concertim Hardware Troubleshooting Methodology\)/g,
+    '<em class="appendix">$&</em>');
+}
+
+/* -------------------------------------------------------------------- *
+ * Filter pills
+ * -------------------------------------------------------------------- */
+function pill(label, pressed, count){
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "pill";
+  b.innerHTML = esc(label) + (count!=null ? ` <span class="cnt">${count}</span>` : "");
+  b.setAttribute("aria-pressed", pressed ? "true" : "false");
+  return b;
+}
+
+function renderTopicPills(){
+  const g = $("#topics"); g.innerHTML = "";
+  const leg = document.createElement("span"); leg.className = "legend"; leg.textContent = "Topic";
+  g.appendChild(leg);
+  g.appendChild(pill("All", topicsSet.size===0, DATA.length));
+  g.firstChild?.nextSibling?.addEventListener("click", () => {
+    topicsSet.clear(); scopesSet.clear(); renderScopePills(); apply();
+  });
+  for(const t of topicsAll){
+    const cnt = DATA.filter(it=>it.topic===t).length;
+    const p = pill(t, topicsSet.has(t), cnt);
+    p.addEventListener("click", () => {
+      if(topicsSet.has(t)) topicsSet.delete(t); else topicsSet.add(t);
+      // drop scopes no longer available under the new topic selection
+      pruneScopes(); renderScopePills(); renderTopicPills(); apply();
+    });
+    g.appendChild(p);
+  }
+  // update the "All" pressed state without full re-render of others
+  const all = g.children[1]; if(all) all.setAttribute("aria-pressed", topicsSet.size===0?"true":"false");
+}
+
+function availableScopes(){
+  const within = topicsSet.size===0 ? DATA : DATA.filter(it=>topicsSet.has(it.topic));
+  return [...new Set(within.map(it=>it.scope))].sort();
+}
+function pruneScopes(){
+  const avail = new Set(availableScopes());
+  for(const s of [...scopesSet]) if(!avail.has(s)) scopesSet.delete(s);
+}
+function renderScopePills(){
+  const g = $("#scopes"); g.innerHTML = "";
+  if(availableScopes().length===0){ g.hidden = true; return; } else g.hidden = false;
+  const leg = document.createElement("span"); leg.className = "legend"; leg.textContent = "Scope";
+  g.appendChild(leg);
+  g.appendChild(pill("All", scopesSet.size===0, null));
+  g.children[1].addEventListener("click", () => { scopesSet.clear(); apply(); updatePressed(); });
+  for(const s of availableScopes()){
+    const p = pill(s, scopesSet.has(s), null);
+    p.classList.add("scope");
+    p.addEventListener("click", () => {
+      if(scopesSet.has(s)) scopesSet.delete(s); else scopesSet.add(s);
+      apply(); updatePressed();
+    });
+    g.appendChild(p);
+  }
+  // refine scope-set legend colour is neutral
+}
+function updatePressed(){
+  const g=$("#scopes");
+  g.children[1].setAttribute("aria-pressed", scopesSet.size===0?"true":"false");
+  const avail = availableScopes();
+  Array.from(g.querySelectorAll(".pill.scope")).forEach(b=>{
+    b.setAttribute("aria-pressed", scopesSet.has(b.textContent.trim())?"true":"false");
+  });
+}
+
+/* -------------------------------------------------------------------- *
+ * Filtering
+ * -------------------------------------------------------------------- */
+function compute(){
+  const tOk = topicsSet.size===0 ? ()=>true : it=>topicsSet.has(it.topic);
+  const sOk = scopesSet.size===0 ? ()=>true : it=>scopesSet.has(it.scope);
+  const q = query.trim().toLowerCase();
+  filtered = DATA.filter((it,i) => tOk(it) && sOk(it) && (!q || hay[i].includes(q)));
+  $("#count").textContent =
+    `${filtered.length} of ${DATA.length} observation${DATA.length===1?"":"s"}` +
+    (query.trim() ? ` · “${query.trim()}”` : "");
+  const empty = filtered.length===0;
+  $("#empty").classList.toggle("hidden", !empty);
+  $("#grid").classList.toggle("hidden", empty || view==="walk");
+}
+
+/* -------------------------------------------------------------------- *
+ * Card rendering
+ * -------------------------------------------------------------------- */
+function cardHTML(it){
+  const acc = accentFor(it.topic_slug);
+  const notes = (it.authoring_notes||[]);
+  const noteBlock = notes.length ? `
+    <div class="authornotes"><strong>Authoring note:</strong>
+      <ul>${notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>` : "";
+  const intro = it.sow.intro ? `<p class="intro">${rich(it.sow.intro)}</p>` : "";
+  const steps = (it.sow.steps||[]).length
+    ? `<ol class="steps">${it.sow.steps.map(s=>`<li>${rich(s)}</li>`).join("")}</ol>`
+    : `<p class="muted">No steps documented yet.</p>`;
+  return `
+    <article class="card ${it.draft?"draft":""}" style="--acc:${acc}" data-id="${esc(it.id)}">
+      <h2 class="title"><a href="#${esc(it.id)}">${esc(it.attention_area)}</a></h2>
+      <p class="badges">
+        <span class="badge topic">${esc(it.topic)}</span>
+        <span class="badge scope">${esc(it.scope)}</span>
+        ${it.draft?`<span class="badge draft">Draft</span>`:""}
+      </p>
+      <p class="desc">${it.description?esc(it.description):'<span class="muted">Not yet documented.</span>'}</p>
+      ${noteBlock}
+      <details class="start">
+        <summary>Where we'd start looking <span class="chev">▾</span></summary>
+        <div class="detbody">
+          <h3 class="sect">Potential service impact</h3>
+          <p>${it.potential_service_impact?esc(it.potential_service_impact):'<span class="muted">Not yet documented.</span>'}</p>
+          <h3 class="sect">Our starting approach</h3>
+          ${intro}${steps}
+        </div>
+      </details>
+    </article>`;
+}
+function renderGrid(){ $("#grid").innerHTML = filtered.map(cardHTML).join(""); }
+
+function walkHTML(it){
+  const acc = accentFor(it.topic_slug);
+  const notes = (it.authoring_notes||[]);
+  const noteBlock = notes.length ? `
+    <div class="authornotes"><strong>Authoring note:</strong>
+      <ul>${notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>` : "";
+  const intro = it.sow.intro ? `<p class="intro">${rich(it.sow.intro)}</p>` : "";
+  const steps = (it.sow.steps||[]).length
+    ? `<ol class="steps">${it.sow.steps.map(s=>`<li>${rich(s)}</li>`).join("")}</ol>`
+    : `<p class="muted">No steps documented yet.</p>`;
+  return `
+    <a class="back" href="#">← Back to grid</a>
+    <p class="badges">
+      <span class="badge topic">${esc(it.topic)}</span>
+      <span class="badge scope">${esc(it.scope)}</span>
+      ${it.draft?`<span class="badge draft">Draft</span>`:""}
+    </p>
+    <h2 class="title">${esc(it.attention_area)}</h2>
+    <p class="desc">${it.description?esc(it.description):'<span class="muted">Not yet documented.</span>'}</p>
+    ${noteBlock}
+    <div class="walk-divider"></div>
+    <h3 class="sect">Potential service impact</h3>
+    <p class="impact">${it.potential_service_impact?esc(it.potential_service_impact):'<span class="muted">Not yet documented.</span>'}</p>
+    <h3 class="sect">Our starting approach</h3>
+    ${intro}${steps}`;
+}
+function renderWalk(){
+  if(!filtered.length){ setView("grid"); return; }
+  walkIndex = Math.max(0, Math.min(walkIndex, filtered.length-1));
+  const it = filtered[walkIndex];
+  $("#walkcard").style.setProperty("--acc", accentFor(it.topic_slug));
+  $("#walkcard").innerHTML = walkHTML(it);
+  $("#progress").textContent = `${walkIndex+1} / ${filtered.length}`;
+  $("#prev").disabled = walkIndex===0;
+  $("#next").disabled = walkIndex===filtered.length-1;
+}
+
+/* -------------------------------------------------------------------- *
+ * View switching
+ * -------------------------------------------------------------------- */
+function setView(v){
+  view = v;
+  const btn = $("#viewBtn");
+  btn.setAttribute("aria-pressed", v==="walk"?"true":"false");
+  btn.textContent = v==="walk" ? "▦" : "≡";
+  btn.title = v==="walk" ? "Back to grid" : "Walkthrough view";
+  const showWalk = v==="walk";
+  $("#walk").classList.toggle("hidden", !showWalk);
+  compute();
+  if(showWalk) renderWalk(); else renderGrid();
+  localStorage.setItem("hpc-view", v);
+  if(v==="grid") window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function gotoItem(id){
+  // deep-link: reset filters so the item is guaranteed visible
+  topicsSet.clear(); scopesSet.clear(); query="";
+  $("#search").value=""; renderTopicPills(); renderScopePills(); updatePressed();
+  compute();
+  const idx = filtered.findIndex(it=>it.id===id);
+  if(idx<0){ setView("grid"); return; }
+  walkIndex = idx; setView("walk");
+  window.scrollTo({top:0,behavior:"auto"});
+}
+
+/* -------------------------------------------------------------------- *
+ * Wiring
+ * -------------------------------------------------------------------- */
+function apply(){ compute(); if(view==="walk") renderWalk(); else renderGrid(); }
+
+$("#viewBtn").addEventListener("click", () => setView(view==="walk"?"grid":"walk"));
+$("#prev").addEventListener("click", () => { if(walkIndex>0){walkIndex--;history.replaceState(null,"","#"+filtered[walkIndex].id);renderWalk();} });
+$("#next").addEventListener("click", () => { if(walkIndex<filtered.length-1){walkIndex++;history.replaceState(null,"","#"+filtered[walkIndex].id);renderWalk();} });
+
+let t;
+$("#search").addEventListener("input", e => { clearTimeout(t); t=setTimeout(()=>{ query=e.target.value; apply(); },120); });
+
+// intercept in-page card-title links → deep-link to walkthrough; "#" = back to grid
+document.addEventListener("click", e => {
+  const a = e.target.closest('a[href^="#"]');
+  if(!a) return;
+  const raw = a.getAttribute("href") || "";
+  if(raw==="#"){ e.preventDefault(); setView("grid"); history.replaceState(null,"","#"); return; }
+  const hash = raw.slice(1);
+  if(DATA.some(it=>it.id===hash)){ e.preventDefault(); gotoItem(hash); history.replaceState(null,"","#"+hash); }
+});
+
+// Printing: reveal every collapsed "Where we'd start" disclosure, then restore.
+let _printOpened = new Set();
+window.addEventListener("beforeprint", () => {
+  document.querySelectorAll(".start:not([open])").forEach(d => { d.open = true; _printOpened.add(d); });
+});
+window.addEventListener("afterprint", () => { _printOpened.forEach(d => d.open = false); _printOpened.clear(); });
+
+window.addEventListener("hashchange", () => {
+  const h = location.hash.slice(1);
+  if(h && DATA.some(it=>it.id===h)) gotoItem(h);
+});
+
+document.addEventListener("keydown", e => {
+  if(e.key==="/" && document.activeElement!==$("#search")){ e.preventDefault(); $("#search").focus(); return; }
+  if(view!=="walk") return;
+  if(e.key==="ArrowRight"){ e.preventDefault(); $("#next").click(); }
+  else if(e.key==="ArrowLeft"){ e.preventDefault(); $("#prev").click(); }
+  else if(e.key==="Escape"){ setView("grid"); history.replaceState(null,"","#"); }
+});
+
+/* Theme */
+(function initTheme(){
+  const saved = localStorage.getItem("hpc-theme");
+  const dark = saved ? saved==="dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  document.documentElement.dataset.theme = dark?"dark":"light";
+  const b=$("#themeBtn");
+  b.textContent = dark?"☀":"🌙";
+  b.title = dark?"Switch to light theme":"Switch to dark theme";
+  b.setAttribute("aria-label", b.title);
+})();
+$("#themeBtn").addEventListener("click", () => {
+  const dark = document.documentElement.dataset.theme==="dark";
+  const next = dark?"light":"dark";
+  document.documentElement.dataset.theme=next;
+  localStorage.setItem("hpc-theme",next);
+  const b=$("#themeBtn");
+  b.textContent = next==="dark"?"☀":"🌙";
+  b.title = next==="dark"?"Switch to light theme":"Switch to dark theme";
+  b.setAttribute("aria-label", b.title);
+});
+
+/* Boot */
+renderTopicPills(); renderScopePills(); updatePressed();
+const savedView = localStorage.getItem("hpc-view");
+const initialHash = location.hash.slice(1);
+if(initialHash && DATA.some(it=>it.id===initialHash)){
+  gotoItem(initialHash);
+} else {
+  setView(savedView==="walk" ? "walk" : "grid");
+  if(savedView==="walk"){ walkIndex=0; renderWalk(); }
+}
+</script>
+<noscript><p style="max-width:760px;margin:2rem auto;padding:0 1rem">This guide is built as a
+single static page; enabling JavaScript enables filtering, search, and the walkthrough view. The
+full data is present in the page source as JSON.</p></noscript>
+</body>
+</html>
