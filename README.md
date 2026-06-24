@@ -38,7 +38,7 @@ The CSVs are the only place you edit. The filename determines the **topic**:
 | `OBSERVATIONS_AND_ACTIONS_PERFORMANCE.csv` | Performance |
 
 An unknown suffix "just works" — `OBSERVATIONS_AND_ACTIONS_RELIABILITY.csv`
-becomes a "Reliability" topic with its own colour.
+becomes a "Reliability" topic automatically.
 
 ### Adding an item
 
@@ -47,8 +47,8 @@ Append a row to the relevant CSV and re-run `python3 build.py`. That's it.
 ### Adding a topic
 
 Create `OBSERVATIONS_AND_ACTIONS_<TOPIC>.csv` with the same six headers, drop it
-in this directory, and re-run `python3 build.py`. A topic pill and colour are
-generated automatically.
+in this directory, and re-run `python3 build.py`. A topic pill is generated
+automatically (topics share the single Concertim-orange accent).
 
 ### Why there is no priority / severity on each item
 
