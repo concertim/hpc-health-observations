@@ -27,7 +27,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 TEMPLATE = HERE / "template.html"
-OUT = HERE / "site" / "index.html"
+OUT = HERE / "docs" / "index.html"
 
 # Authoring placeholder markers — when present we render the row as "Draft"
 # and lift the offending line into an "Authoring note" callout rather than
