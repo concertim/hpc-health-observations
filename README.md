@@ -7,7 +7,10 @@ deliberately **not** a prescriptive checklist of "things you must do".
 
 The site is a single self-contained `index.html` (CSS, JS and data all inline):
 no server, no fetch, no CDN, no JavaScript or CSS dependencies. It works from
-`file://`, so you can open it directly or host the `site/` folder anywhere.
+`file://`, so you can open it directly or host the `docs/` folder anywhere.
+
+A companion **PDF** can also be generated for customer information packets —
+see [Companion PDF](#companion-pdf).
 
 ## Build
 
@@ -16,7 +19,7 @@ python3 build.py
 ```
 
 Standard library only — nothing to install. Reads every
-`OBSERVATIONS_AND_ACTIONS*.csv` next to the script and writes `site/index.html`.
+`OBSERVATIONS_AND_ACTIONS*.csv` next to the script and writes `docs/index.html`.
 
 When the build finishes it prints a summary: the topics and item counts, plus any
 **draft / incomplete rows** it flagged (see below).
@@ -84,9 +87,46 @@ Python — just re-run `python3 build.py`.
 
 ## Deploy
 
-The generated `site/index.html` is fully self-contained. Copy the `site/`
-folder to any static host (or open it directly). For GitHub Pages, point it at
-the `site/` folder (or move `index.html` to `docs/`).
+The generated `docs/index.html` is fully self-contained. Copy the `docs/`
+folder to any static host (or open it directly). For GitHub Pages, serve from
+the **`/docs`** folder — Pages' "deploy from a branch" mode only supports the
+repo root or `/docs`, which is why the build writes to `docs/`. (To use a
+custom domain, add a `docs/CNAME`.)
+
+## Companion PDF
+
+```
+python3 build_pdf.py
+```
+
+Generates `docs/hpc-health-observations.pdf` — a print-ready A4 document for
+shipping in a customer information packet. It reuses `build.py`'s data loader,
+so the PDF and the website always draw from the same CSVs and never drift.
+
+The PDF has:
+
+- a **cover page** with the Concertim-orange accent, title, and a prominent
+  **Generated** timestamp,
+- an **About** section with the same non-prescriptive intent and the
+  no-priority/severity caveat,
+- a "what's inside" topic summary,
+- each topic on its own page, with every observation as a card showing the
+  description, potential service impact, and "where we'd start looking" steps
+  (orange-numbered), **Draft** badges for incomplete rows, and authoring-note
+  callouts where relevant,
+- a footer on every page with the generated timestamp and `Page N / M`.
+
+**Requirements:** the `playwright` Python package and a Chromium browser
+(already present where this guide was developed). Elsewhere, install once:
+
+```
+pip install playwright
+python -m playwright install chromium
+```
+
+The print styling lives in `pdf_template.html` (`__GENERATED__`, `__COUNT__`,
+`__TOPICS_SUMMARY__`, `__TOC__`, `__BODY__` placeholders); edit it there and
+re-run `python3 build_pdf.py`.
 
 ## Layout
 

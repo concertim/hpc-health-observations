@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HPC Health Observations — Open Reference Guide</title>
+<style>
+  :root{
+    --accent:#ff7401; --ink:#1a1d23; --muted:#5b6472; --faint:#8a93a1;
+    --border:#e5e8ee; --border-2:#d3dae3; --tint:#fff1e6; --tintbd:#ffd0a8;
+  }
+  @page{ size:A4; }
+  *{box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);font-size:11pt;line-height:1.5}
+  h1,h2,h3,h4{margin:0;line-height:1.25}
+  .muted{color:var(--faint);font-style:italic}
+
+  /* ---- Cover ---------------------------------------------------------- */
+  .cover{min-height:208mm;display:flex;flex-direction:column;justify-content:center;
+    padding:6mm 4mm;break-after:page}
+  .brand{display:flex;align-items:center;gap:3mm;margin-bottom:8mm}
+  .swatch{width:11mm;height:11mm;background:var(--accent);border-radius:2.5mm}
+  .brandname{font-weight:700;letter-spacing:.1em;font-size:13pt;color:var(--ink)}
+  .brandname b{color:var(--accent)}
+  .cover-bar{height:3mm;background:var(--accent);width:62mm;border-radius:2mm;margin:10mm 0 8mm}
+  .cover-title{font-size:31pt;font-weight:700;letter-spacing:-.015em}
+  .cover-sub{font-size:13.5pt;color:var(--muted);margin-top:2.5mm}
+  .cover-meta{margin-top:16mm;border-top:1px solid var(--border);padding-top:5mm}
+  .cover-meta p{margin:.8mm 0;font-size:10.5pt;color:var(--muted)}
+  .cover-meta .gen{font-weight:700;color:var(--accent);font-size:12pt;margin-bottom:1.5mm}
+  .cover-note{margin-top:6mm;font-size:9.5pt;color:var(--faint);max-width:150mm}
+
+  /* ---- About / provenance -------------------------------------------- */
+  .about-doc{break-after:page}
+  .about-doc h2{font-size:15pt;border-left:5px solid var(--accent);padding-left:3mm;margin:0 0 3mm}
+  .about-doc p{margin:1.8mm 0;color:var(--muted);font-size:10.5pt}
+  .about-doc p strong{color:var(--ink)}
+  .callout{background:var(--tint);border:1px solid var(--tintbd);border-left:3px solid var(--accent);
+    border-radius:2mm;padding:3mm 4mm;margin:3mm 0;font-size:10.5pt;color:var(--ink)}
+  .callout strong{color:var(--accent)}
+  .toc{margin-top:4mm}
+  .toc h3{font-size:9pt;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);margin:4mm 0 1.5mm}
+  .toc ul{list-style:none;margin:0;padding:0}
+  .toc li{padding:1mm 0;border-bottom:1px solid var(--border);font-size:10.5pt;
+    display:flex;justify-content:space-between}
+  .toc li .c{color:var(--faint);font-weight:600}
+
+  /* ---- Topics / items ------------------------------------------------ */
+  .topic{break-before:page}
+  .topic:first-of-type{break-before:auto}
+  .topic-title{font-size:18pt;font-weight:700;border-left:5px solid var(--accent);
+    padding-left:3mm;margin:0 0 4mm}
+  .topic-title .topic-count{font-size:10pt;color:var(--faint);font-weight:600;margin-left:2mm}
+  .item{break-inside:avoid;border:1px solid var(--border);border-radius:3mm;
+    padding:4mm 5mm;margin:0 0 4mm}
+  .item-title{font-size:12.5pt;font-weight:600}
+  .meta{margin:1mm 0 2mm;display:flex;gap:2mm;align-items:center;flex-wrap:wrap}
+  .pill{font-size:8pt;font-weight:600;padding:.7mm 2mm;border-radius:999px;border:1px solid var(--border)}
+  .pill.scope{color:var(--accent);background:var(--tint);border-color:var(--tintbd)}
+  .pill.draft{color:#6b7280;background:#f3f4f6;border-color:#d1d5db}
+  .desc{margin:1mm 0 2mm;font-size:10.5pt}
+  .block{margin-top:2.5mm}
+  .block h4{font-size:8.5pt;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);
+    font-weight:700;margin:0 0 1mm}
+  .intro{color:var(--muted);margin:0 0 2mm;font-size:10.5pt}
+  .steps{list-style:none;counter-reset:s;padding:0;margin:0}
+  .steps li{counter-increment:s;display:flex;gap:3mm;margin:1.2mm 0;font-size:10.5pt;align-items:baseline}
+  .steps li::before{content:counter(s);color:var(--accent);font-weight:700;min-width:4.5mm}
+  .appendix{font-style:italic;color:var(--muted)}
+  .authornotes{background:#f8fafc;border:1px dashed #c7d0da;border-radius:2mm;
+    padding:2mm 3mm;margin:2mm 0;font-size:9.5pt;color:var(--muted)}
+  .authornotes strong{color:var(--ink)}
+  .authornotes ul{margin:1mm 0 0;padding-left:4mm}
+</style>
+</head>
+<body>
+
+  <section class="cover">
+    <div class="brand"><span class="swatch"></span><span class="brandname"><b>Concertim</b></span></div>
+    <div class="cover-bar"></div>
+    <h1 class="cover-title">HPC Health Observations</h1>
+    <p class="cover-sub">An Open Reference Guide</p>
+    <div class="cover-meta">
+      <p class="gen">Generated <time>__GENERATED__</time></p>
+      <p>__COUNT__ observations across __TOPICS_SUMMARY__</p>
+      <p>Source: OBSERVATIONS_AND_ACTIONS*.csv</p>
+    </div>
+    <p class="cover-note">
+      A point-in-time companion to the live, filterable online guide. Content is added over time —
+      for the current version, refer to the online guide rather than this snapshot. This document
+      describes how the Concertim team begins investigating each observation; it is a reference,
+      not a prescription of what anyone must do.
+    </p>
+  </section>
+
+  <section class="about-doc">
+    <h2>About this guide</h2>
+    <p>This is an open, living reference describing how the Concertim team begins investigating HPC
+      health observations. It's shared so customers and peers can compare our practices against their
+      own — <strong>not as a prescription</strong> of what anyone must do. Each entry captures an
+      observation, what it can mean for the service, and where we'd start looking into it.</p>
+    <div class="callout">
+      <strong>Why no priority or severity labels?</strong> Because what's urgent depends entirely on the
+      specific customer, site, and the assets an observation touches. A "critical" filesystem fill on one
+      cluster may be routine headroom on another. We've deliberately left severity out of this guide to
+      avoid implying a fixed ranking — work with us to triage against your environment.
+    </div>
+    <p>Observations are grouped into topics: <strong>Vitals</strong> (essential health indicators),
+      <strong>Security</strong>, and <strong>Performance</strong>. Entries still being written are badged
+      <em>Draft</em> — they're shown so the gaps are visible, not hidden.</p>
+    <div class="toc">
+      <h3>What's inside</h3>
+      <ul>
+        __TOC__
+      </ul>
+    </div>
+  </section>
+
+  <main>
+    __BODY__
+  </main>
+
+</body>
+</html>
