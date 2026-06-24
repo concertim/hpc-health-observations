@@ -69,6 +69,11 @@
   .callout{background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid color-mix(in srgb,var(--accent) 26%,transparent);
     border-left:3px solid var(--accent);border-radius:var(--radius-sm);padding:.7rem .85rem;margin:.7rem 0;color:var(--text)}
   .callout strong{color:var(--accent)}
+  .pdfline{margin:.85rem 0 .1rem}
+  .dlink{display:inline-flex;align-items:center;gap:.35rem;font-weight:600;color:var(--accent-ink);
+    background:var(--accent);border:1px solid var(--accent);padding:.4rem .8rem;border-radius:999px;
+    text-decoration:none;font-size:.85rem;transition:filter .15s,transform .08s}
+  .dlink:hover{filter:brightness(1.06);transform:translateY(-1px)}
 
   .filters{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem .55rem;margin:.5rem 0 .2rem}
   .pillgroup{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
@@ -235,6 +240,7 @@
         walkthrough with the <code>≡</code> button (arrow keys navigate).</p>
       <p>Some entries are still being written and are badged <em>Draft</em> — they're shown so the gaps are
         visible, not hidden.</p>
+      __PDF_LINK__
     </div>
   </details>
 

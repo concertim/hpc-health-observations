@@ -214,6 +214,23 @@ def load_rows():
     return items, flags
 
 
+PDF_NAME = "hpc-health-observations.pdf"
+
+
+def pdf_link_html():
+    """About-panel download link, shown only when the companion PDF is present."""
+    pdf_path = OUT.parent / PDF_NAME
+    if not pdf_path.exists():
+        return ""
+    size_kb = max(1, pdf_path.stat().st_size // 1024)
+    return (
+        '<p class="pdfline">Prefer a printable copy for offline use or to share with a customer? '
+        f'<a class="dlink" href="{PDF_NAME}" download '
+        f'aria-label="Download the companion PDF ({size_kb} KB)">'
+        'Download the companion PDF <span aria-hidden="true">↓</span></a></p>'
+    )
+
+
 def main():
     items, flags = load_rows()
     html = TEMPLATE.read_text(encoding="utf-8")
@@ -222,6 +239,7 @@ def main():
     # did — none do — so a plain substitution is safe here.
     html = html.replace("__DATA__", json.dumps(items, ensure_ascii=False, indent=0))
     html = html.replace("__BUILD__", _build_stamp())
+    html = html.replace("__PDF_LINK__", pdf_link_html())
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(html, encoding="utf-8")
 
