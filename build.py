@@ -224,7 +224,7 @@ def pdf_link_html():
         return ""
     size_kb = max(1, pdf_path.stat().st_size // 1024)
     return (
-        '<p class="pdfline">Prefer a printable copy for offline use or to share with a customer? '
+        '<p class="pdfline">Prefer a printable copy for offline use? '
         f'<a class="dlink" href="{PDF_NAME}" download '
         f'aria-label="Download the companion PDF ({size_kb} KB)">'
         'Download the companion PDF <span aria-hidden="true">↓</span></a></p>'
