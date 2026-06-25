@@ -70,6 +70,10 @@
   .steps{list-style:none;counter-reset:s;padding:0;margin:0}
   .steps li{counter-increment:s;display:flex;gap:3mm;margin:1.2mm 0;font-size:10.5pt;align-items:baseline}
   .steps li::before{content:counter(s);color:var(--accent);font-weight:700;min-width:4.5mm}
+  /* Wrap the step body in one flex item so it wraps as normal inline text —
+     otherwise bare text runs and the <em> appendix ref become separate flex
+     items laid out side by side instead of flowing inline. */
+  .steps li .step-body{flex:1 1 auto;min-width:0}
   .appendix{font-style:italic;color:var(--muted)}
   .authornotes{background:#f8fafc;border:1px dashed #c7d0da;border-radius:2mm;
     padding:2mm 3mm;margin:2mm 0;font-size:9.5pt;color:var(--muted)}

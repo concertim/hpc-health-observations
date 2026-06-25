@@ -70,7 +70,7 @@ def item_html(it):
     steps = it["sow"]["steps"] or []
     if steps:
         steps_html = '<ol class="steps">' + "".join(
-            f"<li>{rich(s)}</li>" for s in steps
+            f'<li><span class="step-body">{rich(s)}</span></li>' for s in steps
         ) + "</ol>"
     else:
         steps_html = '<p class="muted">No steps documented yet.</p>'
