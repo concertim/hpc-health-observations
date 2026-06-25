@@ -114,6 +114,14 @@
   .badge.topic{color:var(--acc);background:color-mix(in srgb,var(--acc) 13%,transparent);
     border-color:color-mix(in srgb,var(--acc) 32%,transparent)}
   .badge.scope{color:var(--muted);background:var(--surface-2)}
+  .code{font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.02em;
+    padding:.2rem .5rem;border-radius:6px;border:1px solid var(--border-strong);
+    background:var(--surface-2);color:var(--text);white-space:nowrap;cursor:copy;
+    user-select:all}
+  .code:hover{border-color:var(--accent);color:var(--accent)}
+  .code[data-flash="1"]{border-color:var(--accent);color:var(--accent);
+    background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+  .walkcard .code{font-size:.8rem}
   .badge.draft{color:#6b7280;background:#f3f4f6;border-color:#d1d5db}
   [data-theme="dark"] .badge.draft{color:#cbd5e1;background:#374151;border-color:#4b5563}
   .desc{margin:.2rem 0 0;color:var(--text);font-size:.92rem}
@@ -240,7 +248,7 @@
         walkthrough with the <code>≡</code> button (arrow keys navigate).</p>
       <p>Some entries are still being written and are badged <em>Draft</em> — they're shown so the gaps are
         visible, not hidden.</p>
-      <p class="pdfline">Prefer a printable copy for offline use? <a class="dlink" href="hpc-health-observations.pdf" download aria-label="Download the companion PDF (734 KB)">Download the companion PDF <span aria-hidden="true">↓</span></a></p>
+      <p class="pdfline">Prefer a printable copy for offline use? <a class="dlink" href="hpc-health-observations.pdf" download aria-label="Download the companion PDF (830 KB)">Download the companion PDF <span aria-hidden="true">↓</span></a></p>
     </div>
   </details>
 
@@ -280,9 +288,199 @@
 "use strict";
 const DATA = [
 {
+"topic": "Performance",
+"topic_emoji": "💪",
+"topic_slug": "performance",
+"reference": "PER-0001",
+"id": "performance-memory-performance-reductions-across-affected-blocks",
+"scope": "Individual Integrity",
+"attention_area": "Memory performance reductions across affected Blocks",
+"description": "May indicate performance degradation",
+"potential_service_impact": "Bad performance = worse throughput",
+"sow": {
+"intro": "Review the results Run further investigations (longer, more intense checks) If problem persists - hardware replacement?",
+"steps": []
+},
+"authoring_notes": [],
+"draft": false
+},
+{
+"topic": "Security",
+"topic_emoji": "🔐",
+"topic_slug": "security",
+"reference": "SEC-0001",
+"id": "security-enable-fail2ban-on-access-hosts",
+"scope": "Environment Perimeter",
+"attention_area": "Enable Fail2Ban on Access Hosts",
+"description": "Fail2Ban improves security by blocking IP addresses with repeated authentication failure attempts. Enabling it on access hosts provides an additional threat deterrent.",
+"potential_service_impact": "Without fail2ban, anyone with access to an access host can repeatedly attempt to authenticate, opening the door to potential brute force attacks.",
+"sow": {
+"intro": null,
+"steps": []
+},
+"authoring_notes": [],
+"draft": true
+},
+{
+"topic": "Security",
+"topic_emoji": "🔐",
+"topic_slug": "security",
+"reference": "SEC-0002",
+"id": "security-review-exposed-services-on-external-network",
+"scope": "Environment Perimeter",
+"attention_area": "Review Exposed Services on External Network",
+"description": "Over time it is possible for services to be exposed to external networks that no longer are required.",
+"potential_service_impact": "Reviewing services exposed to external networks provides the opportunity to update and reclarify access requirements, ensuring that no unnecessary access pathways are open.",
+"sow": {
+"intro": null,
+"steps": []
+},
+"authoring_notes": [
+"SOME NOTE ABOUT WHICH NETWORKS - MAKE IT SPECIFIC TO THEM"
+],
+"draft": true
+},
+{
+"topic": "Security",
+"topic_emoji": "🔐",
+"topic_slug": "security",
+"reference": "SEC-0003",
+"id": "security-tighten-the-scope-of-administrative-permissions",
+"scope": "Privileged Access",
+"attention_area": "Tighten the scope of administrative permissions",
+"description": "It is common practice for administrative users to have privileged access to run any commands in a system. For the purpose of auditing and hardening it can be beneficial to limit the commands particular administrative users have privileged access to.",
+"potential_service_impact": "- administrators could perform destructive actions",
+"sow": {
+"intro": null,
+"steps": []
+},
+"authoring_notes": [],
+"draft": true
+},
+{
+"topic": "Security",
+"topic_emoji": "🔐",
+"topic_slug": "security",
+"reference": "SEC-0004",
+"id": "security-audit-the-commands-and-movements-of-administrative-accounts",
+"scope": "Privileged Access",
+"attention_area": "Audit the commands and movements of administrative accounts",
+"description": "",
+"potential_service_impact": "",
+"sow": {
+"intro": null,
+"steps": []
+},
+"authoring_notes": [],
+"draft": true
+},
+{
+"topic": "Security",
+"topic_emoji": "🔐",
+"topic_slug": "security",
+"reference": "SEC-0005",
+"id": "security-periodically-review-administrative-user-accounts",
+"scope": "Privileged Access",
+"attention_area": "Periodically review administrative user accounts",
+"description": "",
+"potential_service_impact": "",
+"sow": {
+"intro": null,
+"steps": []
+},
+"authoring_notes": [],
+"draft": true
+},
+{
+"topic": "Security",
+"topic_emoji": "🔐",
+"topic_slug": "security",
+"reference": "SEC-0006",
+"id": "security-periodically-review-administrative-user-permissions",
+"scope": "Privileged Access",
+"attention_area": "Periodically review administrative user permissions",
+"description": "",
+"potential_service_impact": "",
+"sow": {
+"intro": null,
+"steps": []
+},
+"authoring_notes": [],
+"draft": true
+},
+{
+"topic": "Security",
+"topic_emoji": "🔐",
+"topic_slug": "security",
+"reference": "SEC-0007",
+"id": "security-user-storage-locations-external-to-environment",
+"scope": "Storage",
+"attention_area": "User storage locations external to environment",
+"description": "",
+"potential_service_impact": "This is not inherently insecure but could pose a security risk as sensitive user information for the HPC Environment is exposed more than it may need to be.",
+"sow": {
+"intro": null,
+"steps": []
+},
+"authoring_notes": [],
+"draft": true
+},
+{
+"topic": "Security",
+"topic_emoji": "🔐",
+"topic_slug": "security",
+"reference": "SEC-0008",
+"id": "security-only-mount-external-storage-to-access-hosts-to-enable-users-to-copy-workload-information-to-internal-storage",
+"scope": "Storage",
+"attention_area": "Only mount external storage to access hosts to enable users to copy workload information to internal storage",
+"description": "",
+"potential_service_impact": "",
+"sow": {
+"intro": null,
+"steps": []
+},
+"authoring_notes": [],
+"draft": true
+},
+{
+"topic": "Security",
+"topic_emoji": "🔐",
+"topic_slug": "security",
+"reference": "SEC-0009",
+"id": "security-minor-cve-patching",
+"scope": "Software and Applications",
+"attention_area": "Minor CVE Patching",
+"description": "These CVEs are of mild concern and are worth repairing at the next maintenance opportunity",
+"potential_service_impact": "",
+"sow": {
+"intro": null,
+"steps": []
+},
+"authoring_notes": [],
+"draft": true
+},
+{
+"topic": "Security",
+"topic_emoji": "🔐",
+"topic_slug": "security",
+"reference": "SEC-0010",
+"id": "security-major-cve-patching",
+"scope": "Software and Applications",
+"attention_area": "Major CVE Patching",
+"description": "These CVEs are of high concern and are recommended to be repaired as soon as possible",
+"potential_service_impact": "",
+"sow": {
+"intro": null,
+"steps": []
+},
+"authoring_notes": [],
+"draft": true
+},
+{
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0001",
 "id": "vitals-unreachable",
 "scope": "Host",
 "attention_area": "Unreachable",
@@ -305,6 +503,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0002",
 "id": "vitals-uncorrectable-memory-error-gpu",
 "scope": "Host",
 "attention_area": "Uncorrectable Memory Error (GPU)",
@@ -328,6 +527,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0003",
 "id": "vitals-gpu-reset-report",
 "scope": "Host",
 "attention_area": "GPU Reset Report",
@@ -350,6 +550,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0004",
 "id": "vitals-multipath-errors",
 "scope": "Storage Array",
 "attention_area": "Multipath Errors",
@@ -371,6 +572,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0005",
 "id": "vitals-high-memory-utilisation",
 "scope": "Host",
 "attention_area": "High Memory Utilisation",
@@ -392,6 +594,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0006",
 "id": "vitals-high-filesystem-utilisation",
 "scope": "Filesystem",
 "attention_area": "High Filesystem Utilisation",
@@ -413,6 +616,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0007",
 "id": "vitals-critical-filesystem-utilisation",
 "scope": "Filesystem",
 "attention_area": "Critical Filesystem Utilisation",
@@ -433,6 +637,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0008",
 "id": "vitals-missing-filesystem-mounts",
 "scope": "Host",
 "attention_area": "Missing Filesystem Mounts",
@@ -453,6 +658,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0009",
 "id": "vitals-high-load",
 "scope": "Host",
 "attention_area": "High Load",
@@ -474,6 +680,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0010",
 "id": "vitals-unable-to-collect-hardware-storage-data",
 "scope": "Host",
 "attention_area": "Unable to Collect Hardware Storage Data",
@@ -492,6 +699,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0011",
 "id": "vitals-infiniband-devices-inactive",
 "scope": "Host",
 "attention_area": "Infiniband Devices Inactive",
@@ -514,6 +722,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0012",
 "id": "vitals-down-drained-on-scheduler",
 "scope": "Host",
 "attention_area": "Down/Drained on Scheduler",
@@ -535,6 +744,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0013",
 "id": "vitals-physical-disk-not-ok",
 "scope": "Storage Array",
 "attention_area": "Physical Disk Not OK",
@@ -556,6 +766,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0014",
 "id": "vitals-overall-system-health-not-ok",
 "scope": "Storage Array",
 "attention_area": "Overall System Health Not OK",
@@ -577,6 +788,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0015",
 "id": "vitals-unable-to-collect-enclosure-data",
 "scope": "Storage Array",
 "attention_area": "Unable to Collect Enclosure Data",
@@ -600,6 +812,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0016",
 "id": "vitals-unable-to-collect-management-interface-data",
 "scope": "Host",
 "attention_area": "Unable to Collect Management Interface Data",
@@ -622,6 +835,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0017",
 "id": "vitals-overall-system-health-not-ok-2",
 "scope": "Host",
 "attention_area": "Overall System Health Not OK",
@@ -645,6 +859,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0018",
 "id": "vitals-outdated-hardware",
 "scope": "Host",
 "attention_area": "Outdated Hardware",
@@ -665,6 +880,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0019",
 "id": "vitals-unknown-warranty-status",
 "scope": "Host",
 "attention_area": "Unknown Warranty Status",
@@ -685,6 +901,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0020",
 "id": "vitals-host-powered-off",
 "scope": "Host",
 "attention_area": "Host Powered Off",
@@ -708,6 +925,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0021",
 "id": "vitals-reported-gpus-changed",
 "scope": "Host",
 "attention_area": "Reported GPUs Changed",
@@ -731,6 +949,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0022",
 "id": "vitals-expected-service-not-running",
 "scope": "Host",
 "attention_area": "Expected Service Not Running",
@@ -752,6 +971,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0023",
 "id": "vitals-excessive-number-of-zombie-processes",
 "scope": "Host",
 "attention_area": "Excessive Number of Zombie Processes",
@@ -774,6 +994,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0024",
 "id": "vitals-system-time-not-synced",
 "scope": "Host",
 "attention_area": "System Time Not Synced",
@@ -797,6 +1018,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0025",
 "id": "vitals-psu-not-reporting-ok",
 "scope": "Host",
 "attention_area": "PSU Not Reporting OK",
@@ -820,6 +1042,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0026",
 "id": "vitals-fan-not-reporting-ok",
 "scope": "Host",
 "attention_area": "Fan Not Reporting OK",
@@ -843,6 +1066,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0027",
 "id": "vitals-vnc-session-older-than-30d",
 "scope": "User",
 "attention_area": "VNC session older than 30d.",
@@ -864,6 +1088,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0028",
 "id": "vitals-recent-ha-warnings-in-log-messages",
 "scope": "Host",
 "attention_area": "Recent HA warnings in log messages.",
@@ -885,6 +1110,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0029",
 "id": "vitals-user-group-quotas-are-not-enabled",
 "scope": "Filesystem",
 "attention_area": "User/group quotas are not enabled.",
@@ -905,6 +1131,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0030",
 "id": "vitals-user-is-above-their-set-soft-file-storage-quota",
 "scope": "User",
 "attention_area": "User is above their set soft file/storage quota.",
@@ -925,6 +1152,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0031",
 "id": "vitals-users-grace-period-has-expired-for-their-soft-file-storage-limit",
 "scope": "User",
 "attention_area": "Users grace period has expired for their soft file/storage limit.",
@@ -945,6 +1173,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0032",
 "id": "vitals-user-is-above-their-set-hard-file-storage-quota",
 "scope": "User",
 "attention_area": "User is above their set hard file/storage quota.",
@@ -965,6 +1194,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0033",
 "id": "vitals-ha-corosync-service-is-not-reporting-ok",
 "scope": "Host",
 "attention_area": "HA Corosync service is not reporting ok.",
@@ -986,6 +1216,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0034",
 "id": "vitals-unable-to-collect-linux-health-data",
 "scope": "Host",
 "attention_area": "Unable to collect Linux health data",
@@ -1006,6 +1237,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0035",
 "id": "vitals-uncorrectable-memory-error-dimm",
 "scope": "Host",
 "attention_area": "Uncorrectable Memory Error (DIMM)",
@@ -1029,6 +1261,7 @@ const DATA = [
 "topic": "Vitals",
 "topic_emoji": "🩺",
 "topic_slug": "vitals",
+"reference": "VIT-0036",
 "id": "vitals-unscheduled-processes",
 "scope": "Host",
 "attention_area": "Unscheduled Processes",
@@ -1046,184 +1279,6 @@ const DATA = [
 },
 "authoring_notes": [],
 "draft": false
-},
-{
-"topic": "Performance",
-"topic_emoji": "💪",
-"topic_slug": "performance",
-"id": "performance-memory-performance-reductions-across-affected-blocks",
-"scope": "Individual Integrity",
-"attention_area": "Memory performance reductions across affected Blocks",
-"description": "May indicate performance degradation",
-"potential_service_impact": "Bad performance = worse throughput",
-"sow": {
-"intro": "Review the results Run further investigations (longer, more intense checks) If problem persists - hardware replacement?",
-"steps": []
-},
-"authoring_notes": [],
-"draft": false
-},
-{
-"topic": "Security",
-"topic_emoji": "🔐",
-"topic_slug": "security",
-"id": "security-enable-fail2ban-on-access-hosts",
-"scope": "Environment Perimeter",
-"attention_area": "Enable Fail2Ban on Access Hosts",
-"description": "Fail2Ban improves security by blocking IP addresses with repeated authentication failure attempts. Enabling it on access hosts provides an additional threat deterrent.",
-"potential_service_impact": "Without fail2ban, anyone with access to an access host can repeatedly attempt to authenticate, opening the door to potential brute force attacks.",
-"sow": {
-"intro": null,
-"steps": []
-},
-"authoring_notes": [],
-"draft": true
-},
-{
-"topic": "Security",
-"topic_emoji": "🔐",
-"topic_slug": "security",
-"id": "security-review-exposed-services-on-external-network",
-"scope": "Environment Perimeter",
-"attention_area": "Review Exposed Services on External Network",
-"description": "Over time it is possible for services to be exposed to external networks that no longer are required.",
-"potential_service_impact": "Reviewing services exposed to external networks provides the opportunity to update and reclarify access requirements, ensuring that no unnecessary access pathways are open.",
-"sow": {
-"intro": null,
-"steps": []
-},
-"authoring_notes": [
-"SOME NOTE ABOUT WHICH NETWORKS - MAKE IT SPECIFIC TO THEM"
-],
-"draft": true
-},
-{
-"topic": "Security",
-"topic_emoji": "🔐",
-"topic_slug": "security",
-"id": "security-tighten-the-scope-of-administrative-permissions",
-"scope": "Privileged Access",
-"attention_area": "Tighten the scope of administrative permissions",
-"description": "It is common practice for administrative users to have privileged access to run any commands in a system. For the purpose of auditing and hardening it can be beneficial to limit the commands particular administrative users have privileged access to.",
-"potential_service_impact": "- administrators could perform destructive actions",
-"sow": {
-"intro": null,
-"steps": []
-},
-"authoring_notes": [],
-"draft": true
-},
-{
-"topic": "Security",
-"topic_emoji": "🔐",
-"topic_slug": "security",
-"id": "security-audit-the-commands-and-movements-of-administrative-accounts",
-"scope": "Privileged Access",
-"attention_area": "Audit the commands and movements of administrative accounts",
-"description": "",
-"potential_service_impact": "",
-"sow": {
-"intro": null,
-"steps": []
-},
-"authoring_notes": [],
-"draft": true
-},
-{
-"topic": "Security",
-"topic_emoji": "🔐",
-"topic_slug": "security",
-"id": "security-periodically-review-administrative-user-accounts",
-"scope": "Privileged Access",
-"attention_area": "Periodically review administrative user accounts",
-"description": "",
-"potential_service_impact": "",
-"sow": {
-"intro": null,
-"steps": []
-},
-"authoring_notes": [],
-"draft": true
-},
-{
-"topic": "Security",
-"topic_emoji": "🔐",
-"topic_slug": "security",
-"id": "security-periodically-review-administrative-user-permissions",
-"scope": "Privileged Access",
-"attention_area": "Periodically review administrative user permissions",
-"description": "",
-"potential_service_impact": "",
-"sow": {
-"intro": null,
-"steps": []
-},
-"authoring_notes": [],
-"draft": true
-},
-{
-"topic": "Security",
-"topic_emoji": "🔐",
-"topic_slug": "security",
-"id": "security-user-storage-locations-external-to-environment",
-"scope": "Storage",
-"attention_area": "User storage locations external to environment",
-"description": "",
-"potential_service_impact": "This is not inherently insecure but could pose a security risk as sensitive user information for the HPC Environment is exposed more than it may need to be.",
-"sow": {
-"intro": null,
-"steps": []
-},
-"authoring_notes": [],
-"draft": true
-},
-{
-"topic": "Security",
-"topic_emoji": "🔐",
-"topic_slug": "security",
-"id": "security-only-mount-external-storage-to-access-hosts-to-enable-users-to-copy-workload-information-to-internal-storage",
-"scope": "Storage",
-"attention_area": "Only mount external storage to access hosts to enable users to copy workload information to internal storage",
-"description": "",
-"potential_service_impact": "",
-"sow": {
-"intro": null,
-"steps": []
-},
-"authoring_notes": [],
-"draft": true
-},
-{
-"topic": "Security",
-"topic_emoji": "🔐",
-"topic_slug": "security",
-"id": "security-minor-cve-patching",
-"scope": "Software and Applications",
-"attention_area": "Minor CVE Patching",
-"description": "These CVEs are of mild concern and are worth repairing at the next maintenance opportunity",
-"potential_service_impact": "",
-"sow": {
-"intro": null,
-"steps": []
-},
-"authoring_notes": [],
-"draft": true
-},
-{
-"topic": "Security",
-"topic_emoji": "🔐",
-"topic_slug": "security",
-"id": "security-major-cve-patching",
-"scope": "Software and Applications",
-"attention_area": "Major CVE Patching",
-"description": "These CVEs are of high concern and are recommended to be repaired as soon as possible",
-"potential_service_impact": "",
-"sow": {
-"intro": null,
-"steps": []
-},
-"authoring_notes": [],
-"draft": true
 }
 ];
 
@@ -1235,11 +1290,21 @@ function accentFor(_slug){ return ACCENT; }
 
 /* Precompute search haystacks (lowercased). */
 const hay = DATA.map(it => ([
-  it.topic, it.scope, it.attention_area, it.description,
+  it.reference, it.topic, it.scope, it.attention_area, it.description,
   it.potential_service_impact, it.sow.intro||"",
   ...(it.sow.steps||[]),
   ...(it.authoring_notes||[])
 ].join(" \n ")).toLowerCase());
+
+// Deep-link anchor for an item: prefer the human-readable reference code (the
+// thing reports cite), fall back to the internal id.
+function hashFor(it){ return it.reference ? it.reference : it.id; }
+function findItemByHash(h){
+  if(!h) return null;
+  const up = h.toUpperCase();
+  return DATA.find(it => it.id === h
+    || (it.reference && it.reference.toUpperCase() === up)) || null;
+}
 
 /* -------------------------------------------------------------------- *
  * State
@@ -1375,8 +1440,9 @@ function cardHTML(it){
     : `<p class="muted">No steps documented yet.</p>`;
   return `
     <article class="card ${it.draft?"draft":""}" style="--acc:${acc}" data-id="${esc(it.id)}">
-      <h2 class="title"><a href="#${esc(it.id)}">${esc(it.attention_area)}</a></h2>
+      <h2 class="title"><a href="#${esc(hashFor(it))}">${esc(it.attention_area)}</a></h2>
       <p class="badges">
+        ${it.reference?`<span class="code" title="Reference code (click to copy)">${esc(it.reference)}</span>`:""}
         <span class="badge topic">${topicLabel(it.topic)}</span>
         <span class="badge scope">${esc(it.scope)}</span>
         ${it.draft?`<span class="badge draft">Draft</span>`:""}
@@ -1409,6 +1475,7 @@ function walkHTML(it){
   return `
     <a class="back" href="#">← Back to grid</a>
     <p class="badges">
+      ${it.reference?`<span class="code" title="Reference code (click to copy)">${esc(it.reference)}</span>`:""}
       <span class="badge topic">${topicLabel(it.topic)}</span>
       <span class="badge scope">${esc(it.scope)}</span>
       ${it.draft?`<span class="badge draft">Draft</span>`:""}
@@ -1450,12 +1517,12 @@ function setView(v){
   if(v==="grid") window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function gotoItem(id){
+function gotoItem(it){
   // deep-link: reset filters so the item is guaranteed visible
   topicsSet.clear(); scopesSet.clear(); query="";
   $("#search").value=""; renderTopicPills(); renderScopePills(); updatePressed();
   compute();
-  const idx = filtered.findIndex(it=>it.id===id);
+  const idx = filtered.indexOf(it);
   if(idx<0){ setView("grid"); return; }
   walkIndex = idx; setView("walk");
   window.scrollTo({top:0,behavior:"auto"});
@@ -1467,8 +1534,8 @@ function gotoItem(id){
 function apply(){ compute(); if(view==="walk") renderWalk(); else renderGrid(); }
 
 $("#viewBtn").addEventListener("click", () => setView(view==="walk"?"grid":"walk"));
-$("#prev").addEventListener("click", () => { if(walkIndex>0){walkIndex--;history.replaceState(null,"","#"+filtered[walkIndex].id);renderWalk();} });
-$("#next").addEventListener("click", () => { if(walkIndex<filtered.length-1){walkIndex++;history.replaceState(null,"","#"+filtered[walkIndex].id);renderWalk();} });
+$("#prev").addEventListener("click", () => { if(walkIndex>0){walkIndex--;history.replaceState(null,"","#"+hashFor(filtered[walkIndex]));renderWalk();} });
+$("#next").addEventListener("click", () => { if(walkIndex<filtered.length-1){walkIndex++;history.replaceState(null,"","#"+hashFor(filtered[walkIndex]));renderWalk();} });
 
 let t;
 $("#search").addEventListener("input", e => { clearTimeout(t); t=setTimeout(()=>{ query=e.target.value; apply(); },120); });
@@ -1479,8 +1546,32 @@ document.addEventListener("click", e => {
   if(!a) return;
   const raw = a.getAttribute("href") || "";
   if(raw==="#"){ e.preventDefault(); setView("grid"); history.replaceState(null,"","#"); return; }
-  const hash = raw.slice(1);
-  if(DATA.some(it=>it.id===hash)){ e.preventDefault(); gotoItem(hash); history.replaceState(null,"","#"+hash); }
+  const it = findItemByHash(raw.slice(1));
+  if(it){ e.preventDefault(); gotoItem(it); history.replaceState(null,"","#"+hashFor(it)); }
+});
+
+// click a reference code chip to copy it
+function legacyCopy(text){
+  const ta=document.createElement("textarea"); ta.value=text;
+  ta.style.cssText="position:fixed;opacity:0;pointer-events:none";
+  document.body.appendChild(ta); ta.select();
+  try{document.execCommand("copy");}catch(e){}
+  document.body.removeChild(ta);
+}
+function copyText(text){
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).catch(()=>legacyCopy(text));
+  } else legacyCopy(text);
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest(".code");
+  if(!c) return;
+  e.stopPropagation();
+  copyText(c.textContent.trim());
+  const prev = c.getAttribute("title");
+  c.setAttribute("data-flash","1");
+  c.setAttribute("title","Copied " + c.textContent.trim());
+  setTimeout(()=>{ c.removeAttribute("data-flash"); if(prev) c.setAttribute("title",prev); }, 900);
 });
 
 // Printing: reveal every collapsed "Where we'd start" disclosure, then restore.
@@ -1492,7 +1583,9 @@ window.addEventListener("afterprint", () => { _printOpened.forEach(d => d.open =
 
 window.addEventListener("hashchange", () => {
   const h = location.hash.slice(1);
-  if(h && DATA.some(it=>it.id===h)) gotoItem(h);
+  const it = findItemByHash(h);
+  if(it) gotoItem(it);
+  else if(h){ setView("grid"); history.replaceState(null, "", "#"); }
 });
 
 document.addEventListener("keydown", e => {
@@ -1527,9 +1620,15 @@ $("#themeBtn").addEventListener("click", () => {
 /* Boot */
 renderTopicPills(); renderScopePills(); updatePressed();
 const savedView = localStorage.getItem("hpc-view");
-const initialHash = location.hash.slice(1);
-if(initialHash && DATA.some(it=>it.id===initialHash)){
-  gotoItem(initialHash);
+const hash = location.hash.slice(1);
+const initial = findItemByHash(hash);
+if(initial){
+  gotoItem(initial);
+} else if(hash){
+  // Hash present but resolves to nothing (e.g. a placeholder/excluded code) —
+  // land cleanly on the grid rather than a stale walkthrough item.
+  setView("grid");
+  history.replaceState(null, "", "#");
 } else {
   setView(savedView==="walk" ? "walk" : "grid");
   if(savedView==="walk"){ walkIndex=0; renderWalk(); }

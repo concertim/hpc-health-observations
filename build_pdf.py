@@ -77,9 +77,11 @@ def item_html(it):
     desc_html = f'<p class="desc">{rich(desc)}</p>' if desc else '<p class="muted">Not yet documented.</p>'
     impact = it["potential_service_impact"]
     impact_html = f"<p>{rich(impact)}</p>" if impact else '<p class="muted">Not yet documented.</p>'
+    ref = it.get("reference") or ""
+    ref_html = f'<span class="refcode">{esc(ref)}</span>' if ref else ""
     return f"""<article class="item">
+  <div class="meta">{ref_html}<span class="pill scope">{esc(it['scope'])}</span>{draft}</div>
   <h3 class="item-title">{esc(it['attention_area'])}</h3>
-  <div class="meta"><span class="pill scope">{esc(it['scope'])}</span>{draft}</div>
   {desc_html}
   {note_html}
   <div class="block"><h4>Potential service impact</h4>{impact_html}</div>
@@ -87,8 +89,29 @@ def item_html(it):
 </article>"""
 
 
+def index_html(items):
+    """A code → title index, sorted by reference code."""
+    rows = [it for it in items if it.get("reference")]
+    rows.sort(key=lambda it: it["reference"])
+    if not rows:
+        return ""
+    body = "".join(
+        f'<div class="idx-row"><span class="idx-code">{esc(it["reference"])}</span>'
+        f'<span class="idx-title">{esc(it["attention_area"])}</span></div>'
+        for it in rows
+    )
+    return (
+        '<section class="index">'
+        '<h2 class="index-title">Reference index</h2>'
+        '<p class="index-intro">Every observation and its reference code, '
+        'as cited in the accompanying report.</p>'
+        + body +
+        '</section>'
+    )
+
+
 def build_doc():
-    items, _flags = build.load_rows()
+    items, _flags, _skipped = build.load_rows()
     topics = sorted({it["topic"] for it in items}, key=topic_rank)
     counts = {t: sum(1 for it in items if it["topic"] == t) for t in topics}
     topics_summary = ", ".join(f"{topic_emoji(t)}{t} ({counts[t]})" for t in topics)
@@ -108,7 +131,7 @@ def build_doc():
             if it["topic"] == t:
                 body.append(item_html(it))
         body.append("</section>")
-    body_html = "\n".join(body)
+    body_html = "\n".join(body) + "\n" + index_html(items)
 
     tpl = TEMPLATE.read_text(encoding="utf-8")
     generated = datetime.datetime.now(datetime.timezone.utc).strftime("%d %B %Y, %H:%M UTC")

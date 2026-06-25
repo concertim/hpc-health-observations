@@ -114,6 +114,14 @@
   .badge.topic{color:var(--acc);background:color-mix(in srgb,var(--acc) 13%,transparent);
     border-color:color-mix(in srgb,var(--acc) 32%,transparent)}
   .badge.scope{color:var(--muted);background:var(--surface-2)}
+  .code{font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.02em;
+    padding:.2rem .5rem;border-radius:6px;border:1px solid var(--border-strong);
+    background:var(--surface-2);color:var(--text);white-space:nowrap;cursor:copy;
+    user-select:all}
+  .code:hover{border-color:var(--accent);color:var(--accent)}
+  .code[data-flash="1"]{border-color:var(--accent);color:var(--accent);
+    background:color-mix(in srgb,var(--accent) 16%,var(--surface))}
+  .walkcard .code{font-size:.8rem}
   .badge.draft{color:#6b7280;background:#f3f4f6;border-color:#d1d5db}
   [data-theme="dark"] .badge.draft{color:#cbd5e1;background:#374151;border-color:#4b5563}
   .desc{margin:.2rem 0 0;color:var(--text);font-size:.92rem}
@@ -288,11 +296,21 @@ function accentFor(_slug){ return ACCENT; }
 
 /* Precompute search haystacks (lowercased). */
 const hay = DATA.map(it => ([
-  it.topic, it.scope, it.attention_area, it.description,
+  it.reference, it.topic, it.scope, it.attention_area, it.description,
   it.potential_service_impact, it.sow.intro||"",
   ...(it.sow.steps||[]),
   ...(it.authoring_notes||[])
 ].join(" \n ")).toLowerCase());
+
+// Deep-link anchor for an item: prefer the human-readable reference code (the
+// thing reports cite), fall back to the internal id.
+function hashFor(it){ return it.reference ? it.reference : it.id; }
+function findItemByHash(h){
+  if(!h) return null;
+  const up = h.toUpperCase();
+  return DATA.find(it => it.id === h
+    || (it.reference && it.reference.toUpperCase() === up)) || null;
+}
 
 /* -------------------------------------------------------------------- *
  * State
@@ -428,8 +446,9 @@ function cardHTML(it){
     : `<p class="muted">No steps documented yet.</p>`;
   return `
     <article class="card ${it.draft?"draft":""}" style="--acc:${acc}" data-id="${esc(it.id)}">
-      <h2 class="title"><a href="#${esc(it.id)}">${esc(it.attention_area)}</a></h2>
+      <h2 class="title"><a href="#${esc(hashFor(it))}">${esc(it.attention_area)}</a></h2>
       <p class="badges">
+        ${it.reference?`<span class="code" title="Reference code (click to copy)">${esc(it.reference)}</span>`:""}
         <span class="badge topic">${topicLabel(it.topic)}</span>
         <span class="badge scope">${esc(it.scope)}</span>
         ${it.draft?`<span class="badge draft">Draft</span>`:""}
@@ -462,6 +481,7 @@ function walkHTML(it){
   return `
     <a class="back" href="#">← Back to grid</a>
     <p class="badges">
+      ${it.reference?`<span class="code" title="Reference code (click to copy)">${esc(it.reference)}</span>`:""}
       <span class="badge topic">${topicLabel(it.topic)}</span>
       <span class="badge scope">${esc(it.scope)}</span>
       ${it.draft?`<span class="badge draft">Draft</span>`:""}
@@ -503,12 +523,12 @@ function setView(v){
   if(v==="grid") window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function gotoItem(id){
+function gotoItem(it){
   // deep-link: reset filters so the item is guaranteed visible
   topicsSet.clear(); scopesSet.clear(); query="";
   $("#search").value=""; renderTopicPills(); renderScopePills(); updatePressed();
   compute();
-  const idx = filtered.findIndex(it=>it.id===id);
+  const idx = filtered.indexOf(it);
   if(idx<0){ setView("grid"); return; }
   walkIndex = idx; setView("walk");
   window.scrollTo({top:0,behavior:"auto"});
@@ -520,8 +540,8 @@ function gotoItem(id){
 function apply(){ compute(); if(view==="walk") renderWalk(); else renderGrid(); }
 
 $("#viewBtn").addEventListener("click", () => setView(view==="walk"?"grid":"walk"));
-$("#prev").addEventListener("click", () => { if(walkIndex>0){walkIndex--;history.replaceState(null,"","#"+filtered[walkIndex].id);renderWalk();} });
-$("#next").addEventListener("click", () => { if(walkIndex<filtered.length-1){walkIndex++;history.replaceState(null,"","#"+filtered[walkIndex].id);renderWalk();} });
+$("#prev").addEventListener("click", () => { if(walkIndex>0){walkIndex--;history.replaceState(null,"","#"+hashFor(filtered[walkIndex]));renderWalk();} });
+$("#next").addEventListener("click", () => { if(walkIndex<filtered.length-1){walkIndex++;history.replaceState(null,"","#"+hashFor(filtered[walkIndex]));renderWalk();} });
 
 let t;
 $("#search").addEventListener("input", e => { clearTimeout(t); t=setTimeout(()=>{ query=e.target.value; apply(); },120); });
@@ -532,8 +552,32 @@ document.addEventListener("click", e => {
   if(!a) return;
   const raw = a.getAttribute("href") || "";
   if(raw==="#"){ e.preventDefault(); setView("grid"); history.replaceState(null,"","#"); return; }
-  const hash = raw.slice(1);
-  if(DATA.some(it=>it.id===hash)){ e.preventDefault(); gotoItem(hash); history.replaceState(null,"","#"+hash); }
+  const it = findItemByHash(raw.slice(1));
+  if(it){ e.preventDefault(); gotoItem(it); history.replaceState(null,"","#"+hashFor(it)); }
+});
+
+// click a reference code chip to copy it
+function legacyCopy(text){
+  const ta=document.createElement("textarea"); ta.value=text;
+  ta.style.cssText="position:fixed;opacity:0;pointer-events:none";
+  document.body.appendChild(ta); ta.select();
+  try{document.execCommand("copy");}catch(e){}
+  document.body.removeChild(ta);
+}
+function copyText(text){
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).catch(()=>legacyCopy(text));
+  } else legacyCopy(text);
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest(".code");
+  if(!c) return;
+  e.stopPropagation();
+  copyText(c.textContent.trim());
+  const prev = c.getAttribute("title");
+  c.setAttribute("data-flash","1");
+  c.setAttribute("title","Copied " + c.textContent.trim());
+  setTimeout(()=>{ c.removeAttribute("data-flash"); if(prev) c.setAttribute("title",prev); }, 900);
 });
 
 // Printing: reveal every collapsed "Where we'd start" disclosure, then restore.
@@ -545,7 +589,9 @@ window.addEventListener("afterprint", () => { _printOpened.forEach(d => d.open =
 
 window.addEventListener("hashchange", () => {
   const h = location.hash.slice(1);
-  if(h && DATA.some(it=>it.id===h)) gotoItem(h);
+  const it = findItemByHash(h);
+  if(it) gotoItem(it);
+  else if(h){ setView("grid"); history.replaceState(null, "", "#"); }
 });
 
 document.addEventListener("keydown", e => {
@@ -580,9 +626,15 @@ $("#themeBtn").addEventListener("click", () => {
 /* Boot */
 renderTopicPills(); renderScopePills(); updatePressed();
 const savedView = localStorage.getItem("hpc-view");
-const initialHash = location.hash.slice(1);
-if(initialHash && DATA.some(it=>it.id===initialHash)){
-  gotoItem(initialHash);
+const hash = location.hash.slice(1);
+const initial = findItemByHash(hash);
+if(initial){
+  gotoItem(initial);
+} else if(hash){
+  // Hash present but resolves to nothing (e.g. a placeholder/excluded code) —
+  // land cleanly on the grid rather than a stale walkthrough item.
+  setView("grid");
+  history.replaceState(null, "", "#");
 } else {
   setView(savedView==="walk" ? "walk" : "grid");
   if(savedView==="walk"){ walkIndex=0; renderWalk(); }

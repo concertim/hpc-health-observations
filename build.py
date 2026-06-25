@@ -154,6 +154,7 @@ def load_rows():
         sys.exit("No OBSERVATIONS_AND_ACTIONS*.csv files found next to build.py.")
     items = []
     flags = []  # (topic, attention_area, reason) for draft/flagged rows
+    skipped = []  # (topic, reference) rows excluded as placeholders
     seen_slugs = {}
     for fp in files:
         path = Path(fp)
@@ -165,6 +166,7 @@ def load_rows():
             for row in reader:
                 attention = tidy_paragraph(row.get("Attention Area", ""))
                 scope = tidy_paragraph(row.get("Scope", ""))
+                reference = tidy_paragraph(row.get("Reference Code", ""))
                 desc_raw = row.get("Description", "") or ""
                 impact_raw = row.get("Potential Service Impact", "") or ""
                 sow_raw = row.get("Statement of Work", "") or ""
@@ -181,6 +183,14 @@ def load_rows():
                         authoring_notes.append(n)
 
                 has_sow = bool(sow["intro"]) or bool(sow["steps"])
+
+                # Exclude placeholder rows: a reference code reserved for a future
+                # item, with no narrative content yet. Kept rows have at least one
+                # of attention area / description / impact / statement of work.
+                if not attention and not desc and not impact and not has_sow:
+                    skipped.append((topic, reference or "(no code)"))
+                    continue
+
                 empty_core = not desc or not impact or not has_sow
                 draft = empty_core or bool(authoring_notes)
 
@@ -211,6 +221,7 @@ def load_rows():
                     "topic": topic,
                     "topic_emoji": TOPIC_EMOJI.get(topic, ""),
                     "topic_slug": tslug,
+                    "reference": reference,
                     "id": slug,
                     "scope": scope,
                     "attention_area": attention,
@@ -220,7 +231,7 @@ def load_rows():
                     "authoring_notes": authoring_notes,
                     "draft": draft,
                 })
-    return items, flags
+    return items, flags, skipped
 
 
 PDF_NAME = "hpc-health-observations.pdf"
@@ -241,7 +252,7 @@ def pdf_link_html():
 
 
 def main():
-    items, flags = load_rows()
+    items, flags, skipped = load_rows()
     html = TEMPLATE.read_text(encoding="utf-8")
     # Embed the data. We use JSON-serialised text in place of a sentinel token.
     # A JSON string value could only contain "__DATA__" if a CSV cell literally
@@ -260,6 +271,13 @@ def main():
           f"{len(topics)} topic(s):")
     for t, n in topics.items():
         print(f"  • {t}: {n}")
+    if skipped:
+        by_topic = {}
+        for topic, _ref in skipped:
+            by_topic[topic] = by_topic.get(topic, 0) + 1
+        detail = ", ".join(f"{t}: {c}" for t, c in by_topic.items())
+        print(f"\nExcluded {len(skipped)} placeholder row(s) ({detail}) — "
+              f"reference codes with no content yet.")
     drafted = [it for it in items if it["draft"]]
     if drafted:
         print(f"\n{len(drafted)} draft/incomplete row(s) rendered with a Draft badge:")

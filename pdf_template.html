@@ -56,6 +56,9 @@
     padding:4mm 5mm;margin:0 0 4mm}
   .item-title{font-size:12.5pt;font-weight:600}
   .meta{margin:1mm 0 2mm;display:flex;gap:2mm;align-items:center;flex-wrap:wrap}
+  .refcode{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:8.5pt;
+    font-weight:600;letter-spacing:.02em;padding:.6mm 2mm;border-radius:2mm;
+    border:1px solid var(--border-2);background:#f7f8fa;color:var(--accent)}
   .pill{font-size:8pt;font-weight:600;padding:.7mm 2mm;border-radius:999px;border:1px solid var(--border)}
   .pill.scope{color:var(--accent);background:var(--tint);border-color:var(--tintbd)}
   .pill.draft{color:#6b7280;background:#f3f4f6;border-color:#d1d5db}
@@ -72,6 +75,17 @@
     padding:2mm 3mm;margin:2mm 0;font-size:9.5pt;color:var(--muted)}
   .authornotes strong{color:var(--ink)}
   .authornotes ul{margin:1mm 0 0;padding-left:4mm}
+
+  /* ---- Reference index ---------------------------------------------- */
+  .index{break-before:page}
+  .index-title{font-size:18pt;font-weight:700;border-left:5px solid var(--accent);
+    padding-left:3mm;margin:0 0 2mm}
+  .index-intro{color:var(--muted);font-size:10pt;margin:0 0 4mm}
+  .idx-row{display:flex;gap:4mm;padding:1.5mm 0;border-bottom:1px solid var(--border);
+    font-size:10pt;break-inside:avoid;align-items:baseline}
+  .idx-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-weight:600;color:var(--accent);min-width:26mm;flex:none}
+  .idx-title{color:var(--ink)}
 </style>
 </head>
 <body>
