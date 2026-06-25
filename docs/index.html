@@ -234,13 +234,13 @@
         avoid implying a fixed ranking — it is recommended to triage against your environment specifically.
       </div>
       <h2>Topics</h2>
-      <p>Observations are grouped into topics: <strong>Vitals</strong> (essential health indicators),
-        <strong>Security</strong>, and <strong>Performance</strong>. Use the topic pills to focus on an area;
+      <p>Observations are grouped into topics: <strong>🩺 Vitals</strong> (essential health indicators),
+        <strong>🔐 Security</strong>, and <strong>💪 Performance</strong>. Use the topic pills to focus on an area;
         the scope pills and search narrow further. You can browse the grid or switch to a focused
         walkthrough with the <code>≡</code> button (arrow keys navigate).</p>
       <p>Some entries are still being written and are badged <em>Draft</em> — they're shown so the gaps are
         visible, not hidden.</p>
-      <p class="pdfline">Prefer a printable copy for offline use? <a class="dlink" href="hpc-health-observations.pdf" download aria-label="Download the companion PDF (633 KB)">Download the companion PDF <span aria-hidden="true">↓</span></a></p>
+      <p class="pdfline">Prefer a printable copy for offline use? <a class="dlink" href="hpc-health-observations.pdf" download aria-label="Download the companion PDF (734 KB)">Download the companion PDF <span aria-hidden="true">↓</span></a></p>
     </div>
   </details>
 
@@ -272,7 +272,7 @@
 </main>
 
 <footer>
-  Built from the project CSVs · generated <time id="built">2026-06-24</time> ·
+  Built from the project CSVs · generated <time id="built">2026-06-25</time> ·
   edit the CSVs and run <code>python3 build.py</code> to refresh.
 </footer>
 
@@ -281,6 +281,7 @@
 const DATA = [
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-unreachable",
 "scope": "Host",
@@ -302,6 +303,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-uncorrectable-memory-error-gpu",
 "scope": "Host",
@@ -324,6 +326,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-gpu-reset-report",
 "scope": "Host",
@@ -345,6 +348,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-multipath-errors",
 "scope": "Storage Array",
@@ -365,6 +369,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-high-memory-utilisation",
 "scope": "Host",
@@ -385,6 +390,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-high-filesystem-utilisation",
 "scope": "Filesystem",
@@ -405,6 +411,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-critical-filesystem-utilisation",
 "scope": "Filesystem",
@@ -424,6 +431,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-missing-filesystem-mounts",
 "scope": "Host",
@@ -443,6 +451,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-high-load",
 "scope": "Host",
@@ -463,6 +472,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-unable-to-collect-hardware-storage-data",
 "scope": "Host",
@@ -480,6 +490,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-infiniband-devices-inactive",
 "scope": "Host",
@@ -501,6 +512,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-down-drained-on-scheduler",
 "scope": "Host",
@@ -521,6 +533,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-physical-disk-not-ok",
 "scope": "Storage Array",
@@ -541,6 +554,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-overall-system-health-not-ok",
 "scope": "Storage Array",
@@ -561,6 +575,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-unable-to-collect-enclosure-data",
 "scope": "Storage Array",
@@ -583,6 +598,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-unable-to-collect-management-interface-data",
 "scope": "Host",
@@ -604,6 +620,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-overall-system-health-not-ok-2",
 "scope": "Host",
@@ -626,6 +643,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-outdated-hardware",
 "scope": "Host",
@@ -645,6 +663,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-unknown-warranty-status",
 "scope": "Host",
@@ -664,6 +683,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-host-powered-off",
 "scope": "Host",
@@ -686,6 +706,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-reported-gpus-changed",
 "scope": "Host",
@@ -708,6 +729,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-expected-service-not-running",
 "scope": "Host",
@@ -728,6 +750,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-excessive-number-of-zombie-processes",
 "scope": "Host",
@@ -749,6 +772,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-system-time-not-synced",
 "scope": "Host",
@@ -771,6 +795,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-psu-not-reporting-ok",
 "scope": "Host",
@@ -793,6 +818,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-fan-not-reporting-ok",
 "scope": "Host",
@@ -815,6 +841,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-vnc-session-older-than-30d",
 "scope": "User",
@@ -835,6 +862,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-recent-ha-warnings-in-log-messages",
 "scope": "Host",
@@ -855,6 +883,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-user-group-quotas-are-not-enabled",
 "scope": "Filesystem",
@@ -874,6 +903,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-user-is-above-their-set-soft-file-storage-quota",
 "scope": "User",
@@ -893,6 +923,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-users-grace-period-has-expired-for-their-soft-file-storage-limit",
 "scope": "User",
@@ -912,6 +943,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-user-is-above-their-set-hard-file-storage-quota",
 "scope": "User",
@@ -931,6 +963,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-ha-corosync-service-is-not-reporting-ok",
 "scope": "Host",
@@ -951,6 +984,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-unable-to-collect-linux-health-data",
 "scope": "Host",
@@ -970,6 +1004,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-uncorrectable-memory-error-dimm",
 "scope": "Host",
@@ -992,6 +1027,7 @@ const DATA = [
 },
 {
 "topic": "Vitals",
+"topic_emoji": "🩺",
 "topic_slug": "vitals",
 "id": "vitals-unscheduled-processes",
 "scope": "Host",
@@ -1013,6 +1049,7 @@ const DATA = [
 },
 {
 "topic": "Performance",
+"topic_emoji": "💪",
 "topic_slug": "performance",
 "id": "performance-memory-performance-reductions-across-affected-blocks",
 "scope": "Individual Integrity",
@@ -1028,6 +1065,7 @@ const DATA = [
 },
 {
 "topic": "Security",
+"topic_emoji": "🔐",
 "topic_slug": "security",
 "id": "security-enable-fail2ban-on-access-hosts",
 "scope": "Environment Perimeter",
@@ -1043,6 +1081,7 @@ const DATA = [
 },
 {
 "topic": "Security",
+"topic_emoji": "🔐",
 "topic_slug": "security",
 "id": "security-review-exposed-services-on-external-network",
 "scope": "Environment Perimeter",
@@ -1060,6 +1099,7 @@ const DATA = [
 },
 {
 "topic": "Security",
+"topic_emoji": "🔐",
 "topic_slug": "security",
 "id": "security-tighten-the-scope-of-administrative-permissions",
 "scope": "Privileged Access",
@@ -1075,6 +1115,7 @@ const DATA = [
 },
 {
 "topic": "Security",
+"topic_emoji": "🔐",
 "topic_slug": "security",
 "id": "security-audit-the-commands-and-movements-of-administrative-accounts",
 "scope": "Privileged Access",
@@ -1090,6 +1131,7 @@ const DATA = [
 },
 {
 "topic": "Security",
+"topic_emoji": "🔐",
 "topic_slug": "security",
 "id": "security-periodically-review-administrative-user-accounts",
 "scope": "Privileged Access",
@@ -1105,6 +1147,7 @@ const DATA = [
 },
 {
 "topic": "Security",
+"topic_emoji": "🔐",
 "topic_slug": "security",
 "id": "security-periodically-review-administrative-user-permissions",
 "scope": "Privileged Access",
@@ -1120,6 +1163,7 @@ const DATA = [
 },
 {
 "topic": "Security",
+"topic_emoji": "🔐",
 "topic_slug": "security",
 "id": "security-user-storage-locations-external-to-environment",
 "scope": "Storage",
@@ -1135,6 +1179,7 @@ const DATA = [
 },
 {
 "topic": "Security",
+"topic_emoji": "🔐",
 "topic_slug": "security",
 "id": "security-only-mount-external-storage-to-access-hosts-to-enable-users-to-copy-workload-information-to-internal-storage",
 "scope": "Storage",
@@ -1150,6 +1195,7 @@ const DATA = [
 },
 {
 "topic": "Security",
+"topic_emoji": "🔐",
 "topic_slug": "security",
 "id": "security-minor-cve-patching",
 "scope": "Software and Applications",
@@ -1165,6 +1211,7 @@ const DATA = [
 },
 {
 "topic": "Security",
+"topic_emoji": "🔐",
 "topic_slug": "security",
 "id": "security-major-cve-patching",
 "scope": "Software and Applications",
@@ -1200,6 +1247,12 @@ const hay = DATA.map(it => ([
 const TOPIC_ORDER = ["Vitals","Security","Performance"];
 function topicRank(t){ const i = TOPIC_ORDER.indexOf(t); return i<0 ? 99+t : i; }
 const topicsAll = [...new Set(DATA.map(it=>it.topic))].sort((a,b)=>topicRank(a)-topicRank(b));
+// topic -> emoji, sourced from the data (build.py's TOPIC_EMOJI).
+const TOPIC_EMOJI = (() => {
+  const m = {}; DATA.forEach(it => { if(it.topic) m[it.topic] = it.topic_emoji || ""; });
+  return m;
+})();
+function topicLabel(t){ return (TOPIC_EMOJI[t] ? TOPIC_EMOJI[t] + " " : "") + t; }
 const topicsSet = new Set();   // empty = all
 const scopesSet = new Set();   // empty = all (within selected topics)
 let query = "";
@@ -1244,7 +1297,7 @@ function renderTopicPills(){
   });
   for(const t of topicsAll){
     const cnt = DATA.filter(it=>it.topic===t).length;
-    const p = pill(t, topicsSet.has(t), cnt);
+    const p = pill(topicLabel(t), topicsSet.has(t), cnt);
     p.addEventListener("click", () => {
       if(topicsSet.has(t)) topicsSet.delete(t); else topicsSet.add(t);
       // drop scopes no longer available under the new topic selection
@@ -1324,7 +1377,7 @@ function cardHTML(it){
     <article class="card ${it.draft?"draft":""}" style="--acc:${acc}" data-id="${esc(it.id)}">
       <h2 class="title"><a href="#${esc(it.id)}">${esc(it.attention_area)}</a></h2>
       <p class="badges">
-        <span class="badge topic">${esc(it.topic)}</span>
+        <span class="badge topic">${topicLabel(it.topic)}</span>
         <span class="badge scope">${esc(it.scope)}</span>
         ${it.draft?`<span class="badge draft">Draft</span>`:""}
       </p>
@@ -1356,7 +1409,7 @@ function walkHTML(it){
   return `
     <a class="back" href="#">← Back to grid</a>
     <p class="badges">
-      <span class="badge topic">${esc(it.topic)}</span>
+      <span class="badge topic">${topicLabel(it.topic)}</span>
       <span class="badge scope">${esc(it.scope)}</span>
       ${it.draft?`<span class="badge draft">Draft</span>`:""}
     </p>

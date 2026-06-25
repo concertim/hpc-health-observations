@@ -45,6 +45,14 @@ SUFFIX_TOPIC = {
     "VITALS": "Vitals",
 }
 
+# Emoji shown alongside each topic label, for a consistent throughline across
+# the site and the companion PDF. Add new topics here; unknown topics get no emoji.
+TOPIC_EMOJI = {
+    "Vitals": "🩺",
+    "Security": "🔐",
+    "Performance": "💪",
+}
+
 
 def topic_for(path: Path) -> str:
     """Derive a friendly topic label from a CSV filename."""
@@ -201,6 +209,7 @@ def load_rows():
 
                 items.append({
                     "topic": topic,
+                    "topic_emoji": TOPIC_EMOJI.get(topic, ""),
                     "topic_slug": tslug,
                     "id": slug,
                     "scope": scope,

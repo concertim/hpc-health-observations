@@ -37,6 +37,12 @@ def topic_rank(t):
     return i if i >= 0 else 99 + t
 
 
+def topic_emoji(t):
+    """Emoji prefix for a topic label (shared with the site via build.py)."""
+    e = build.TOPIC_EMOJI.get(t, "")
+    return e + " " if e else ""
+
+
 def esc(s):
     return html.escape("" if s is None else str(s), quote=True)
 
@@ -85,16 +91,16 @@ def build_doc():
     items, _flags = build.load_rows()
     topics = sorted({it["topic"] for it in items}, key=topic_rank)
     counts = {t: sum(1 for it in items if it["topic"] == t) for t in topics}
-    topics_summary = ", ".join(f"{t} ({counts[t]})" for t in topics)
+    topics_summary = ", ".join(f"{topic_emoji(t)}{t} ({counts[t]})" for t in topics)
 
     toc = "".join(
-        f"<li><span>{esc(t)}</span><span class=\"c\">{counts[t]}</span></li>"
+        f"<li><span>{topic_emoji(t)}{esc(t)}</span><span class=\"c\">{counts[t]}</span></li>"
         for t in topics
     )
     body = []
     for t in topics:
         body.append(
-            f'<section class="topic"><h2 class="topic-title">{esc(t)}'
+            f'<section class="topic"><h2 class="topic-title">{topic_emoji(t)}{esc(t)}'
             f'<span class="topic-count">{counts[t]} observation'
             f'{"" if counts[t] == 1 else "s"}</span></h2>'
         )

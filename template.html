@@ -234,8 +234,8 @@
         avoid implying a fixed ranking — it is recommended to triage against your environment specifically.
       </div>
       <h2>Topics</h2>
-      <p>Observations are grouped into topics: <strong>Vitals</strong> (essential health indicators),
-        <strong>Security</strong>, and <strong>Performance</strong>. Use the topic pills to focus on an area;
+      <p>Observations are grouped into topics: <strong>🩺 Vitals</strong> (essential health indicators),
+        <strong>🔐 Security</strong>, and <strong>💪 Performance</strong>. Use the topic pills to focus on an area;
         the scope pills and search narrow further. You can browse the grid or switch to a focused
         walkthrough with the <code>≡</code> button (arrow keys navigate).</p>
       <p>Some entries are still being written and are badged <em>Draft</em> — they're shown so the gaps are
@@ -300,6 +300,12 @@ const hay = DATA.map(it => ([
 const TOPIC_ORDER = ["Vitals","Security","Performance"];
 function topicRank(t){ const i = TOPIC_ORDER.indexOf(t); return i<0 ? 99+t : i; }
 const topicsAll = [...new Set(DATA.map(it=>it.topic))].sort((a,b)=>topicRank(a)-topicRank(b));
+// topic -> emoji, sourced from the data (build.py's TOPIC_EMOJI).
+const TOPIC_EMOJI = (() => {
+  const m = {}; DATA.forEach(it => { if(it.topic) m[it.topic] = it.topic_emoji || ""; });
+  return m;
+})();
+function topicLabel(t){ return (TOPIC_EMOJI[t] ? TOPIC_EMOJI[t] + " " : "") + t; }
 const topicsSet = new Set();   // empty = all
 const scopesSet = new Set();   // empty = all (within selected topics)
 let query = "";
@@ -344,7 +350,7 @@ function renderTopicPills(){
   });
   for(const t of topicsAll){
     const cnt = DATA.filter(it=>it.topic===t).length;
-    const p = pill(t, topicsSet.has(t), cnt);
+    const p = pill(topicLabel(t), topicsSet.has(t), cnt);
     p.addEventListener("click", () => {
       if(topicsSet.has(t)) topicsSet.delete(t); else topicsSet.add(t);
       // drop scopes no longer available under the new topic selection
@@ -424,7 +430,7 @@ function cardHTML(it){
     <article class="card ${it.draft?"draft":""}" style="--acc:${acc}" data-id="${esc(it.id)}">
       <h2 class="title"><a href="#${esc(it.id)}">${esc(it.attention_area)}</a></h2>
       <p class="badges">
-        <span class="badge topic">${esc(it.topic)}</span>
+        <span class="badge topic">${topicLabel(it.topic)}</span>
         <span class="badge scope">${esc(it.scope)}</span>
         ${it.draft?`<span class="badge draft">Draft</span>`:""}
       </p>
@@ -456,7 +462,7 @@ function walkHTML(it){
   return `
     <a class="back" href="#">← Back to grid</a>
     <p class="badges">
-      <span class="badge topic">${esc(it.topic)}</span>
+      <span class="badge topic">${topicLabel(it.topic)}</span>
       <span class="badge scope">${esc(it.scope)}</span>
       ${it.draft?`<span class="badge draft">Draft</span>`:""}
     </p>
