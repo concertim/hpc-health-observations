@@ -22,12 +22,16 @@ import csv
 import glob
 import json
 import re
+import shutil
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 TEMPLATE = HERE / "template.html"
 OUT = HERE / "docs" / "index.html"
+APPENDICES_CSV = HERE / "appendices" / "appendices.csv"
+APPENDICES_SRC = HERE / "appendices"
+APPENDICES_OUT = HERE / "docs" / "appendices"
 
 # Authoring placeholder markers — when present we render the row as "Draft"
 # and lift the offending line into an "Authoring note" callout rather than
@@ -234,6 +238,66 @@ def load_rows():
     return items, flags, skipped
 
 
+def load_appendices():
+    """Read the appendices manifest (appendices/appendices.csv).
+
+    Returns a list of {reference, title, topic, topic_emoji, file, description,
+    slug}. Missing file → the whole feature degrades to "no appendices" (the
+    site simply hides the Appendices button). A row whose referenced file does
+    not exist is warned about and skipped, so a stale manifest entry never
+    produces a broken image link in the published site.
+    """
+    if not APPENDICES_CSV.exists():
+        return []
+    items = []
+    with APPENDICES_CSV.open(newline="", encoding="utf-8") as fh:
+        reader = csv.DictReader(fh)
+        if reader.fieldnames is None:
+            return []
+        for row in reader:
+            reference = tidy_paragraph(row.get("Reference", ""))
+            title = tidy_paragraph(row.get("Title", ""))
+            topic = tidy_paragraph(row.get("Topic", ""))
+            filename = (row.get("File", "") or "").strip()
+            description = tidy_paragraph(row.get("Description", ""))
+            if not title and not reference:
+                continue  # blank line
+            if not filename:
+                print(f"  ! appendix {reference or title!r} has no File — skipped.")
+                continue
+            src = APPENDICES_SRC / filename
+            if not src.exists():
+                print(f"  ! appendix {reference or title!r}: file not found at "
+                      f"{filename!r} — skipped.")
+                continue
+            items.append({
+                "reference": reference,
+                "title": title,
+                "topic": topic,
+                "topic_emoji": TOPIC_EMOJI.get(topic, ""),
+                "file": filename,
+                "description": description,
+                "slug": slugify(f"{reference} {title}") or "appendix",
+            })
+    return items
+
+
+def publish_appendices(appendices):
+    """Copy each referenced appendix file into docs/appendices/.
+
+    The output dir is rebuilt fresh each run (mirrors how index.html is
+    regenerated wholesale), so files dropped from the manifest don't linger in
+    the published site.
+    """
+    if APPENDICES_OUT.exists():
+        shutil.rmtree(APPENDICES_OUT)
+    if not appendices:
+        return
+    APPENDICES_OUT.mkdir(parents=True, exist_ok=True)
+    for a in appendices:
+        shutil.copy2(APPENDICES_SRC / a["file"], APPENDICES_OUT / a["file"])
+
+
 PDF_NAME = "hpc-health-observations.pdf"
 
 
@@ -253,11 +317,15 @@ def pdf_link_html():
 
 def main():
     items, flags, skipped = load_rows()
+    appendices = load_appendices()
+    publish_appendices(appendices)
     html = TEMPLATE.read_text(encoding="utf-8")
     # Embed the data. We use JSON-serialised text in place of a sentinel token.
     # A JSON string value could only contain "__DATA__" if a CSV cell literally
     # did — none do — so a plain substitution is safe here.
     html = html.replace("__DATA__", json.dumps(items, ensure_ascii=False, indent=0))
+    html = html.replace("__APPENDICES__",
+                        json.dumps(appendices, ensure_ascii=False, indent=0))
     html = html.replace("__BUILD__", _build_stamp())
     html = html.replace("__PDF_LINK__", pdf_link_html())
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -271,6 +339,13 @@ def main():
           f"{len(topics)} topic(s):")
     for t, n in topics.items():
         print(f"  • {t}: {n}")
+    if appendices:
+        print(f"Appendices: {len(appendices)}")
+        for a in appendices:
+            label = a["reference"] or "(unlabelled)"
+            print(f"  • {label}: {a['title']}")
+    else:
+        print("Appendices: none")
     if skipped:
         by_topic = {}
         for topic, _ref in skipped:

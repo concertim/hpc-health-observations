@@ -59,6 +59,42 @@ Create `OBSERVATIONS_AND_ACTIONS_<TOPIC>.csv` with the same seven headers, drop 
 in this directory, and re-run `python3 build.py`. A topic pill is generated
 automatically (topics share the single Concertim-orange accent).
 
+### Appendices
+
+Some observations reference supporting material (an appendix) by name — e.g.
+the Vitals items cite `(Appendix A: Concertim Hardware Troubleshooting
+Methodology)`. Appendices are published on the site behind the **📎 Appendices**
+button in the top bar, which opens a dedicated view listing each one with its
+title, related-topic badge, a short description, the content rendered inline,
+and an *Open full size* link.
+
+Appendices are registered in a manifest — `appendices/appendices.csv` — with
+one row per appendix:
+
+```
+Reference,Title,Topic,File,Description
+Appendix A,Concertim Hardware Troubleshooting Methodology,Vitals,vitals-concertim-hardware-troubleshooting-methodology.png,The methodology we follow when a hardware fault is reproduced.
+```
+
+| Column | Meaning |
+|---|---|
+| `Reference` | The label cited in the items, e.g. `Appendix A`. Shown as a chip. |
+| `Title` | The appendix title. |
+| `Topic` | Optional related topic (`Vitals` / `Security` / `Performance`). Shown as a badge with the topic's emoji; blank means no badge. |
+| `File` | The filename **within** `appendices/` (e.g. a `.png` / `.pdf`). Must exist. |
+| `Description` | Optional one-line summary shown above the content. |
+
+The build copies each referenced `File` into `docs/appendices/` and references
+it by relative path — the same pattern the companion PDF uses — so the page stays
+small and still works from `file://` (an `<img src>` is a resource load, not a
+fetch). The `docs/appendices/` folder is rebuilt fresh each run, so a file
+dropped from the manifest won't linger in the published site. When the manifest
+is empty or absent the 📎 button is hidden and nothing else changes.
+
+The `(Appendix A: …)` mentions inside items are shown italicised (the existing
+behaviour) but are **not** turned into links — the appendices view is the single
+way to reach them.
+
 ### Why there is no priority / severity on each item
 
 The `Concertim Impact Rating` column is **intentionally dropped** from the
