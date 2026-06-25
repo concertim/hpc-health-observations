@@ -86,6 +86,14 @@
   .idx-code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     font-weight:600;color:var(--accent);min-width:26mm;flex:none}
   .idx-title{color:var(--ink)}
+
+  /* ---- Appendices ---------------------------------------------------- */
+  .appendices-doc{break-before:page}
+  .appendix-card{break-inside:avoid;border:1px solid var(--border);border-radius:3mm;
+    padding:4mm 5mm;margin:0 0 4mm}
+  .appendix-title{font-size:12.5pt;font-weight:600;margin:1mm 0 2mm}
+  .appendix-img{max-width:100%;height:auto;border:1px solid var(--border);border-radius:2mm;
+    display:block;margin-top:1mm}
 </style>
 </head>
 <body>
@@ -123,6 +131,9 @@
     <p>Observations are grouped into topics: <strong>🩺 Vitals</strong> (essential health indicators),
       <strong>🔐 Security</strong>, and <strong>💪 Performance</strong>. Entries still being written are badged
       <em>Draft</em> — they're shown so the gaps are visible, not hidden.</p>
+    <p>Some observations reference supporting material by name (e.g. <em>Appendix A: Concertim Hardware
+      Troubleshooting Methodology</em>). These are collected in an <strong>Appendices</strong> section at the
+      end of this document.</p>
     <div class="toc">
       <h3>What's inside</h3>
       <ul>

@@ -18,6 +18,7 @@ Usage::
     python3 build_pdf.py            # writes docs/hpc-health-observations.pdf
 """
 
+import base64
 import datetime
 import html
 import sys
@@ -110,8 +111,61 @@ def index_html(items):
     )
 
 
+# Image MIME types we can inline directly into the PDF. Anything else (e.g. a
+# PDF appendix) is rendered as a note pointing to the file instead.
+APPENDIX_MIME = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".svg": "image/svg+xml",
+}
+
+
+def appendix_html(a):
+    """Render one appendix as a card. Images are inlined as base64 data URIs so
+    they resolve from the /tmp render file (no relative path / fetch needed)."""
+    ref = a.get("reference") or ""
+    ref_html = f'<span class="refcode">{esc(ref)}</span>' if ref else ""
+    topic = a.get("topic") or ""
+    topic_html = (f'<span class="pill scope">{topic_emoji(topic)}{esc(topic)}</span>'
+                  if topic else "")
+    desc = a.get("description") or ""
+    desc_html = f'<p class="desc">{esc(desc)}</p>' if desc else ""
+    src = build.APPENDICES_SRC / a["file"]
+    ext = src.suffix.lower()
+    mime = APPENDIX_MIME.get(ext)
+    if mime:
+        data = base64.b64encode(src.read_bytes()).decode("ascii")
+        content = (f'<img class="appendix-img" src="data:{mime};base64,{data}" '
+                   f'alt="{esc(a.get("title") or ref or "appendix")}">')
+    else:
+        content = (f'<p class="muted">Included as a separate file: {esc(a["file"])}. '
+                   'See the online guide\'s Appendices view.</p>')
+    title = a.get("title") or ref or "Appendix"
+    return f"""<article class="appendix-card">
+  <div class="meta">{ref_html}{topic_html}</div>
+  <h3 class="appendix-title">{esc(title)}</h3>
+  {desc_html}
+  {content}
+</article>"""
+
+
+def appendices_html(appendices):
+    if not appendices:
+        return ""
+    cards = "\n".join(appendix_html(a) for a in appendices)
+    return ('<section class="appendices-doc">'
+            '<h2 class="topic-title">Appendices</h2>'
+            '<p class="index-intro">Supporting reference material cited from the '
+            'observations above.</p>'
+            + cards + '</section>')
+
+
 def build_doc():
     items, _flags, _skipped = build.load_rows()
+    appendices = build.load_appendices()
     topics = sorted({it["topic"] for it in items}, key=topic_rank)
     counts = {t: sum(1 for it in items if it["topic"] == t) for t in topics}
     topics_summary = ", ".join(f"{topic_emoji(t)}{t} ({counts[t]})" for t in topics)
@@ -120,6 +174,9 @@ def build_doc():
         f"<li><span>{topic_emoji(t)}{esc(t)}</span><span class=\"c\">{counts[t]}</span></li>"
         for t in topics
     )
+    if appendices:
+        toc += (f'<li><span>📎 Appendices</span>'
+                f'<span class="c">{len(appendices)}</span></li>')
     body = []
     for t in topics:
         body.append(
@@ -131,7 +188,7 @@ def build_doc():
             if it["topic"] == t:
                 body.append(item_html(it))
         body.append("</section>")
-    body_html = "\n".join(body) + "\n" + index_html(items)
+    body_html = "\n".join(body) + "\n" + index_html(items) + appendices_html(appendices)
 
     tpl = TEMPLATE.read_text(encoding="utf-8")
     generated = datetime.datetime.now(datetime.timezone.utc).strftime("%d %B %Y, %H:%M UTC")
